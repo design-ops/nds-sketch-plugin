@@ -1,0 +1,23 @@
+{
+  "compatibleVersion": 3,
+  "bundleVersion": 1,
+  "commands": [
+    {
+      "name": "Switch Theme",
+      "identifier": "switchthemelibrary.my-command-identifier",
+      "script": "./switch-theme-main.js",
+      "handlers": {
+        "run": "onRun",
+        "actions": {
+          "Shutdown": "onShutdown"
+        }
+      }
+    }
+  ],
+  "menu": {
+    "title": "Switch Theme Library",
+    "items": [
+      "switchthemelibrary.my-command-identifier"
+    ]
+  }
+}

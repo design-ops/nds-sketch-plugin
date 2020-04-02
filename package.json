@@ -1,0 +1,45 @@
+{
+  "name": "switchthemelibrary",
+  "version": "0.1.0",
+  "engines": {
+    "sketch": ">=3.0"
+  },
+  "skpm": {
+    "name": "Switch Theme Library",
+    "manifest": "src/manifest.json",
+    "main": "switchthemelibrary.sketchplugin",
+    "assets": [
+      "assets/**/*"
+    ],
+    "sketch-assets-file": "sketch-assets/icons.sketch"
+  },
+  "scripts": {
+    "build": "skpm-build",
+    "watch": "skpm-build --watch",
+    "start": "skpm-build --watch",
+    "postinstall": "npm run build && skpm-link",
+    "log": "skpm log -f",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@skpm/builder": "^0.7.4",
+    "@skpm/extract-loader": "^2.0.2",
+    "css-loader": "^3.2.0",
+    "html-loader": "^0.5.5",
+    "jest": "^25.2.4"
+  },
+  "resources": [
+    "resources/**/*.js"
+  ],
+  "dependencies": {
+    "babel-jest": "^25.2.4",
+    "babel-preset-env": "^1.7.0",
+    "sketch-module-web-view": "^3.1.4"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
+  "author": "atom.oil"
+}
