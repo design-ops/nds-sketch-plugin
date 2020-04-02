@@ -37,32 +37,48 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
     let res = []
     overrides.forEach( override => {
         let id = override.value
-        let levels = override.path.split("/").length
         let sharedSymbol = lookup[id]
         debugOverride(override, lookup)
+        nestedContexts = updateNestedContexts(nestedContexts, override)
         switch( override.property ){
             case "symbolID":
+                // need to get the master symbol name
+                // if it has the right number of levels and doesn't start with `_/`
+                // then it's valid to be swapped.
+                /*
                 let symbolName = ""
                 if (override.affectedLayer && override.affectedLayer.master){
                     symbolName = override.affectedLayer.master.name
                 }
-                let ncontext = new NestedContext(levels, symbolName)
-                manageNesting(nestedContexts, ncontext)
+                //let ncontext = new NestedContext(levels, symbolName)
+                //manageNesting(nestedContexts, ncontext)
+                */
                 break
             case "textStyle":
             case "layerStyle":
                 let styleName = ""
-                if (sharedSymbol) styleName = sharedSymbol.name
+                if (sharedSymbol && sharedSymbol.name) styleName = sharedSymbol.name
                 // need to get the atom out of styleName :-/
+                let styleContext = baseContext.duplicate().mergeLastSegment(styleName)
                 let result = {
-                    context: contextFromNestedContexts(baseContext, nestedContexts),
+                    context: contextFromNestedContexts(styleContext, nestedContexts),
                     layer: override }
                 res.push(result)
-                console.log(result.context)
-                break;
+                console.log(`    context:   ${result.context.toString()}`)
+                break
         }
     })
     return res
+}
+
+const updateNestedContexts = (nestedContexts, override) => {
+    let levels = override.path.split("/").length
+    let contextName = ""
+    if (override.affectedLayer && override.affectedLayer.master){
+        contextName = override.affectedLayer.master.name
+    }
+    let ncontext = new NestedContext(levels, contextName)
+    return manageNesting(nestedContexts, ncontext)
 }
 
 const contextFromNestedContexts = (baseContext, nestedContexts) => {
@@ -159,6 +175,23 @@ export class Context {
         return this
     }
 
+    mergeLastSegment(str) {
+        // remove any initial '/'
+        if (str.substr(0,1) == "/"){
+            str = str.substr(1)
+        }
+        let arr = str.split("/")
+        if (arr.length > 1) {
+            let max = arr.length-1
+            for(var i=0;i<max;i++) {
+                arr[i] = "*"
+            }
+        }
+        let nstr = `_/${arr.join("/")}`
+        this.merge(nstr)
+        return this // or should it return this.merge(str) ??
+    }
+
     get length() {
         return this._arr.length
     }
@@ -166,4 +199,6 @@ export class Context {
     segmentAtIndex(index) {
         
     }
+
+
 }

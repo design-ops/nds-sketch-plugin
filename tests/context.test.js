@@ -54,3 +54,15 @@ test('chaining duplicate & bad merge', () => {
     let id2 = id1.duplicate().merge("some malformed string")
     expect(id2.toString()).toEqual("_/section/organism/element/atom")
 })
+
+test('addLastSegment leading /', () => {
+    let id1 = new Context("_/section/organism/element/atom")
+    id1.mergeLastSegment("/nSection/nOrganism/nElement/nATOM")
+    expect(id1.toString()).toEqual("_/section/organism/element/nATOM")
+})
+
+test('addLastSegment no leading /', () => {
+    let id1 = new Context("_/section/organism/element/atom")
+    id1.mergeLastSegment("nSection/nOrganism/nElement/nATOM")
+    expect(id1.toString()).toEqual("_/section/organism/element/nATOM")
+})
