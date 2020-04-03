@@ -11,16 +11,16 @@ document.getElementById('button').addEventListener('click', () => {
 })
 */
 
-window.showSelectLibrary = (libraryNames) => {
-    console.log("showSelectLibrary", libraryNames)
+window.showSelectLibrary = (libraryData) => {
+    console.log("showSelectLibrary", libraryData)
     let body = document.querySelector("#content")
     let outer = document.querySelector("template#chooseLibrary").content.cloneNode(true)
     let entryTemplate = document.querySelector("template#libraryOption").content
     console.log("(2)", body, outer, entryTemplate)
-    libraryNames.forEach( name => {
+    libraryData.forEach( lib => {
         let entry = entryTemplate.cloneNode(true)
-        // entry.querySelector("#libraryEntry").attributes.libraryName = name
-        entry.querySelector("#libraryEntry").innerText = name
+        entry.querySelector("#libraryEntry").attributes.libraryId = lib.id
+        entry.querySelector("#libraryEntry").innerText = lib.name
         outer.querySelector("#libraryOptions").appendChild(entry)
     });
     console.log("appendingChild...")
@@ -29,6 +29,6 @@ window.showSelectLibrary = (libraryNames) => {
 }
 
 selectLibrary = (node) => {
-    const libraryName = node.attributes.libraryName
-    window.postMessage('selectLibrary', libraryName)
+    const id = node.attributes.libraryId
+    window.postMessage('selectLibrary', id)
 }

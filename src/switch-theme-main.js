@@ -8,7 +8,7 @@ import { Context } from './lib/context'
 const UIIdentifier = 'switchthemelibrary.webview'
 
 export default function onRun() {
-  console.log("onRun....")
+  console.log("[Start Switch Theme Library Plugin]")
   
   closeUI(UIIdentifier)
   createUI(UIIdentifier, {
@@ -16,17 +16,21 @@ export default function onRun() {
       showSelectLibrary()
     },
     onSelectLibrary: (l) => {
+      console.log(`Selected library with id '${l}'`)
       getIdentifiers()
     }
   })
 }
 
 const showSelectLibrary = () => {
-  console.log("showSelectLibrary")
+  console.log("showSelectLibrary...")
   let libs = Library.getLibraries()
   let libNames = []
   libs.forEach( lib => {
-    libNames.push(lib.name)
+    if (lib.enabled){
+      // console.log(lib)
+      libNames.push({name: lib.name, id: lib.id})
+    }
   })
   commandToUI(UIIdentifier, "showSelectLibrary", libNames)
 }
