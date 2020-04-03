@@ -1,4 +1,4 @@
-import { NestedContext, manageNesting } from '../src/lib/nestedContext'
+import { NestedContext, manageNesting } from '../src/lib/nested'
 
 test('nesting', () => {
     let nc1 = new NestedContext(1, "")

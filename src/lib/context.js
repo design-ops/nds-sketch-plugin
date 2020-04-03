@@ -1,0 +1,110 @@
+
+export class ContextType {
+    static ATOM = "ContextType.ATOM"
+    static SWITCH = "ContextType.SWITCH"
+    static INVALID = "ContextType.INVALID"
+}
+
+export class Context {
+    
+    static validNumberOfSegments = 3
+
+    constructor(str) {
+        this._arr = this._arrayFromString(str)
+        this._type = this._typeFromString(str)
+    }
+
+    _arrayFromString(str) {
+        const getArray = (str) => {
+            if (str.substr(0,1) == "!") return null
+            if (str.substr(0,2) == "_/") {
+                return str.substr(2).split("/")
+            }
+            let arr = str.split("/")
+            if (arr.length == Context.validNumberOfSegments) return arr
+            // handle atoms that start with a '/'
+            arr = str.substr(1).split("/")
+            if (arr.length == Context.validNumberOfSegments) return arr
+            return null
+        }
+        let arr = getArray(str)
+        if (Array.isArray(arr)){
+            arr.forEach( (value, index, array) => {
+                array[index] = value.split("-")[0].trim()
+            })
+        }
+        return arr
+    }
+
+    _typeFromString(str) {
+        if (str.substr(0,1) == "!") return ContextType.INVALID
+        if (str.substr(0,2) == "_/") return ContextType.SWITCH
+        if (str.split("/").length == Context.validNumberOfSegments) return ContextType.ATOM
+        // handle atoms that start with a '/'
+        if (str.substr(1).split("/").length == Context.validNumberOfSegments) return ContextType.ATOM
+        return ContextType.INVALID
+    }
+
+    get type() {
+        return this._type
+    }
+
+    toString() {
+        switch(this._type){
+            case ContextType.SWITCH:
+                return `_/${this._arr.join("/")}`
+            case ContextType.ATOM:
+                return this._arr.join("/")
+        }
+        return ""
+    }
+
+    duplicate() {
+        return new Context(this.toString())
+    }
+
+    merge(str) {
+        const newArr = this._arrayFromString(str)
+        let arr = this._arr
+        if (newArr != null) {
+            for(var i=0;i<newArr.length;i++) {
+                const newVal = newArr[i]
+                // extend the context if merging in value is longer
+                if (i >= arr.length) arr[i] = "*"
+                if (newVal != "*") arr[i] = newVal
+            }
+        }
+        if (arr.length == Context.validNumberOfSegments) return new Context(arr.join("/"))
+        return new Context(`_/${arr.join("/")}`)
+    }
+
+    mergeLastSegmentOLD(str) {
+        // remove any initial '/'
+        if (str.substr(0,1) == "/"){
+            str = str.substr(1)
+        }
+        let arr = str.split("/")
+        if (arr.length > 1) {
+            let max = arr.length-1
+            for(var i=0;i<max;i++) {
+                arr[i] = "*"
+            }
+        }
+        let nstr = `_/${arr.join("/")}`
+        return this.merge(nstr)
+    }
+
+    mergeLastSegment(str) {
+        let context = new Context(str)
+        if (context.type == ContextType.ATOM) {
+            let arr = context.toString().split("/")
+            let max = arr.length-1
+            for(var i=0;i<max;i++) {
+                arr[i] = "*"
+            }
+            let nstr = arr.join("/")
+            return this.merge(nstr)
+        }
+        return this
+    }
+}

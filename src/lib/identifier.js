@@ -1,4 +1,11 @@
-import { NestedContext, manageNesting } from './nestedContext'
+import { 
+    updateNestedContextsFromOverride, 
+    contextFromNestedContexts 
+} from './nested'
+import { 
+    Context, 
+    ContextType 
+} from './context'
 
 export const getIdentifiersIn = (layer, lookup) => {
     let res = []
@@ -21,10 +28,18 @@ const getNestedContexts = (layer, context, lookup) => {
             res = res.concat( nested )
         } else if (sublayer.type == "SymbolInstance") {
             console.log(`  master:`, sublayer.master.name)
-            let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
-            res = res.concat( nested )
+            if (sublayer.overrides.length > 0){
+                let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
+                res = res.concat( nested )
+            } else {
+                if (newContext.type == ContextType.ATOM){
+                    res.push({context: newContext, layer: sublayer})
+                }
+            }
         } else {
-            res.push({context: newContext, layer: sublayer})
+            if (newContext.type == ContextType.ATOM){
+                res.push({context: newContext, layer: sublayer})
+            }
         }
     })
     return res
@@ -39,54 +54,45 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
         let id = override.value
         let sharedSymbol = lookup[id]
         debugOverride(override, lookup)
-        nestedContexts = updateNestedContexts(nestedContexts, override)
         switch( override.property ){
             case "symbolID":
+                nestedContexts = updateNestedContextsFromOverride(nestedContexts, override)
                 // need to get the master symbol name
                 // if it has the right number of levels and doesn't start with `_/`
                 // then it's valid to be swapped.
-                /*
-                let symbolName = ""
                 if (override.affectedLayer && override.affectedLayer.master){
-                    symbolName = override.affectedLayer.master.name
+                    const symbolName = override.affectedLayer.master.name
+                    let symbolContext = new Context(symbolName)
+                    if (symbolContext.type == ContextType.ATOM) {
+                        symbolContext = baseContext.duplicate().mergeLastSegment(symbolName)
+                        let result = {
+                            context: contextFromNestedContexts(symbolContext, nestedContexts),
+                            layer: override }
+                        res.push(result)
+                        console.log(`    context:   ${result.context.toString()}`)
+                    }
                 }
-                //let ncontext = new NestedContext(levels, symbolName)
-                //manageNesting(nestedContexts, ncontext)
-                */
                 break
             case "textStyle":
             case "layerStyle":
                 let styleName = ""
                 if (sharedSymbol && sharedSymbol.name) styleName = sharedSymbol.name
                 // need to get the atom out of styleName :-/
-                let styleContext = baseContext.duplicate().mergeLastSegment(styleName)
-                let result = {
-                    context: contextFromNestedContexts(styleContext, nestedContexts),
-                    layer: override }
-                res.push(result)
-                console.log(`    context:   ${result.context.toString()}`)
+                let styleContext = new Context(styleName)
+                if (styleContext.type == ContextType.ATOM) {
+                    styleContext = baseContext.duplicate().mergeLastSegment(styleName)
+                    let result = {
+                        context: contextFromNestedContexts(styleContext, nestedContexts),
+                        layer: override }
+                    res.push(result)
+                    console.log(`    context:   ${result.context.toString()}`)
+                } else {
+                    console.log(`    not a valid atom, so ignoring:   ${styleName}`)
+                }
                 break
         }
     })
     return res
-}
-
-const updateNestedContexts = (nestedContexts, override) => {
-    let levels = override.path.split("/").length
-    let contextName = ""
-    if (override.affectedLayer && override.affectedLayer.master){
-        contextName = override.affectedLayer.master.name
-    }
-    let ncontext = new NestedContext(levels, contextName)
-    return manageNesting(nestedContexts, ncontext)
-}
-
-const contextFromNestedContexts = (baseContext, nestedContexts) => {
-    let context = baseContext.duplicate()
-    nestedContexts.forEach( nc => {
-        context.merge(nc.info)
-    })
-    return context
 }
 
 const debugOverride = (override, lookup) => {
@@ -114,91 +120,4 @@ const getContextFromName = (existing, layer) => {
         return new Context(name)
     }
     return existing.duplicate().merge(name)
-}
-
-export const getSelectedLayers = (document) => {
-    let selectedLayers
-    if (document.selectedLayers && document.selectedLayers.length !== 0 && selectedLayersAreArtboard(document.selectedLayers)) {
-        selectedLayers = document.selectedLayers;
-    } else {
-        selectedLayers = document.selectedPage;
-    }
-    return selectedLayers
-}
-
-const selectedLayersAreArtboard = (selectedLayers) => {
-    if (selectedLayers.layers.length > 0 && selectedLayers.layers[0].layers != undefined){
-        return true
-    }
-    return false
-}
-
-export class Context {
-    
-    constructor(str) {
-        this._isValid = false
-        this._arr = this._arrayFromString(str)
-        if (this._arr != null) {
-            this._isValid = true
-        }
-    }
-
-    _arrayFromString(str) {
-        if (str.substr(0,2) != "_/") {
-            return null
-        }
-        return str.substr(2).split("/")
-    }
-
-    get isValid() {
-        return this._isValid
-    }
-
-    toString() {
-        return `_/${this._arr.join("/")}`
-    }
-
-    duplicate() {
-        return new Context(this.toString())
-    }
-
-    merge(str) {
-        const newArr = this._arrayFromString(str)
-        if (newArr != null) {
-            for(var i=0;i<newArr.length;i++) {
-                const newVal = newArr[i]
-                // extend the context if merging in value is longer
-                if (i >= this._arr.length) this._arr[i] = "*"
-                if (newVal != "*") this._arr[i] = newVal
-            }
-        }
-        return this
-    }
-
-    mergeLastSegment(str) {
-        // remove any initial '/'
-        if (str.substr(0,1) == "/"){
-            str = str.substr(1)
-        }
-        let arr = str.split("/")
-        if (arr.length > 1) {
-            let max = arr.length-1
-            for(var i=0;i<max;i++) {
-                arr[i] = "*"
-            }
-        }
-        let nstr = `_/${arr.join("/")}`
-        this.merge(nstr)
-        return this // or should it return this.merge(str) ??
-    }
-
-    get length() {
-        return this._arr.length
-    }
-
-    segmentAtIndex(index) {
-        
-    }
-
-
 }

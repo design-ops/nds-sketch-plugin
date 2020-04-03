@@ -22,6 +22,7 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@skpm/builder": "^0.7.4",
     "@skpm/extract-loader": "^2.0.2",
     "css-loader": "^3.2.0",
@@ -39,6 +40,9 @@
   "babel": {
     "presets": [
       "@babel/preset-env"
+    ],
+    "plugins": [
+        "@babel/plugin-proposal-class-properties"
     ]
   },
   "author": "atom.oil"
