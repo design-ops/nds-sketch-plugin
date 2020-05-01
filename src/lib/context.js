@@ -5,6 +5,28 @@ export class FixedSizedContextType {
     static INVALID = "ContextType.INVALID"
 }
 
+export class VariableSizeContext {
+    constructor(str) {
+        this._arr = this._arrayFromString(str)
+    }
+    _arrayFromString(str) {
+        return str.split("/")
+    }
+    toString() {
+        return this._arr.join("/")
+    }
+    append(str) {
+        return new VariableSizeContext(this.toString()+"/"+str)
+    }
+    merge(str) {
+        // could be smarter!
+        return new VariableSizeContext(this.toString()+"/M:"+str)
+    }
+    duplicate() {
+        return new VariableSizeContext(this.toString())
+    }
+}
+
 export class FixedSizeContext {
     
     static validNumberOfSegments = 3

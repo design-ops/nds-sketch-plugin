@@ -3,6 +3,7 @@ import {
     contextFromNestedContexts 
 } from './nested'
 import { 
+    VariableSizeContext,
     FixedSizeContext, 
     FixedSizedContextType 
 } from './context'
@@ -51,8 +52,8 @@ const getNestedContexts = (layer, context, lookup) => {
 }
 
 const getContextsFromOverrides = (overrides, context, lookup) => {
-    console.log("OVERRIDES ---------------")
-    let baseContext = context.duplicate() //
+    console.log("OVERRIDES ---------------!!")
+    let baseContext = context; // context.duplicate() //
     let nestedContexts = []
     let res = []
     overrides.forEach( override => {
@@ -62,38 +63,29 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
         switch( override.property ){
             case "symbolID":
                 nestedContexts = updateNestedContextsFromOverride(nestedContexts, override)
-                // need to get the master symbol name
-                // if it has the right number of levels and doesn't start with `_/`
-                // then it's valid to be swapped.
                 if (override.affectedLayer && override.affectedLayer.master){
-                    const symbolName = override.affectedLayer.master.name
-                    let symbolContext = new FixedSizeContext(symbolName)
-                    if (symbolContext.type == FixedSizedContextType.ATOM) {
-                        symbolContext = baseContext.duplicate().mergeLastSegment(symbolName)
-                        let result = {
-                            context: contextFromNestedContexts(symbolContext, nestedContexts),
-                            layer: override }
-                        res.push(result)
-                        console.log(`    context:   ${result.context.toString()}`)
-                    }
+                    const symbolName = `<${override.affectedLayer.master.name}>`
+                    let symbolContext = baseContext.append(symbolName)
+                    let result = {
+                        context: symbolContext,
+                        contextOLD: contextFromNestedContexts(symbolContext, nestedContexts),
+                        layer: override }
+                    res.push(result)
+                    console.log(`    context:   ${result.context.toString()}`)
                 }
                 break
             case "textStyle":
             case "layerStyle":
-                let styleName = ""
-                if (sharedSymbol && sharedSymbol.name) styleName = sharedSymbol.name
-                // need to get the atom out of styleName :-/
-                let styleContext = new FixedSizeContext(styleName)
-                if (styleContext.type == FixedSizedContextType.ATOM) {
-                    styleContext = baseContext.duplicate().mergeLastSegment(styleName)
+                if (sharedSymbol && sharedSymbol.name){
+                    let styleName = `<${sharedSymbol.name}>`
+                    let styleContext = baseContext.append(styleName)
                     let result = {
-                        context: contextFromNestedContexts(styleContext, nestedContexts),
+                        context: styleContext,
+                        contextOLD: contextFromNestedContexts(styleContext, nestedContexts),
                         layer: override }
                     res.push(result)
                     console.log(`    context:   ${result.context.toString()}`)
-                } else {
-                    console.log(`    not a valid atom, so ignoring:   ${styleName}`)
-                }
+                } 
                 break
         }
     })
@@ -123,8 +115,19 @@ const getContextFromName = (existing, layer) => {
     if (layer.master) name = layer.master.name
     if (existing == null) {
         console.log(`getContextFromName - creating new "${name}"`)
+        return new VariableSizeContext(name)
+    }
+    console.log(`getContextFromName - merging "${name}" into "${existing.toString()}" > "${existing.type}"`)
+    return existing.append(name)
+}
+
+const getContextFromNameOLD = (existing, layer) => {
+    let name = layer.name
+    if (layer.master) name = layer.master.name
+    if (existing == null) {
+        console.log(`getContextFromName - creating new "${name}"`)
         return new FixedSizeContext(name)
     }
-    console.log(`getContextFromName - merging "${name}" into "${existing.toString()}"`)
+    console.log(`getContextFromName - merging "${name}" into "${existing.toString()}" > "${existing.type}"`)
     return existing.duplicate().merge(name)
 }

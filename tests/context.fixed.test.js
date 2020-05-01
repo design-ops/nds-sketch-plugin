@@ -132,5 +132,5 @@ test('merge into an invalid context', () => {
     let id1 = new FixedSizeContext("some random string")
     expect(id1.type).toEqual(FixedSizedContextType.INVALID)
     let id2 = id1.merge("_/well/formed/string")
-    console.log(id2.toString())
+    expect(id2.toString()).toEqual("_/well/formed/string")
 })

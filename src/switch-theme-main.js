@@ -3,7 +3,6 @@ import { createTextLayerSymbolLookup } from "./lib/library"
 import { createUI, closeUI, commandToUI } from './lib/ui'
 import { getIdentifiersIn } from './lib/identifier'
 import { getSelectedLayers } from './lib/layers'
-import { FixedSizeContext } from './lib/context'
 
 const UIIdentifier = 'switchthemelibrary.webview'
 
@@ -48,13 +47,12 @@ const showSelectLibrary = () => {
 }
 
 const getIdentifiers = () => {
-  FixedSizeContext.validNumberOfSegments = 4
   const document = Document.getSelectedDocument()
   const targetLayer = getSelectedLayers(document)
   const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document)
   console.log("getIdentifiers - getIdentifiersIn")
   const ids = getIdentifiersIn(targetLayer, lookup)
-  console.log("// items to replace -----------------------------------------------------------------")
+  console.log("/// items to replace -----------------------------------------------------------------")
   ids.forEach( item => {
     console.log(`${item.context.toString()} >> ${item.layer.type}`)
   })

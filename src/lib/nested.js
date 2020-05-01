@@ -1,8 +1,6 @@
+import { FixedSizeContext, FixedSizedContextType } from "./context"
 
 // export is only for jest
-
-import { Context, ContextType } from "./context"
-
 // @TODO switch to use rewire to expose this
 export class NestedContext {
     constructor(level, info) {
