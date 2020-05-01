@@ -59,7 +59,7 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
     overrides.forEach( override => {
         let id = override.value
         let sharedSymbol = lookup[id]
-        debugOverride(override, lookup)
+        let padding = debugOverride(override, lookup)
         switch( override.property ){
             case "symbolID":
                 nestedContexts = updateNestedContextsFromOverride(nestedContexts, override)
@@ -67,11 +67,11 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
                     const symbolName = `<${override.affectedLayer.master.name}>`
                     let symbolContext = baseContext.append(symbolName)
                     let result = {
-                        context: symbolContext,
-                        contextOLD: contextFromNestedContexts(symbolContext, nestedContexts),
+                        contextSimple: symbolContext,
+                        context: contextFromNestedContexts(symbolContext, nestedContexts),
                         layer: override }
                     res.push(result)
-                    console.log(`    context:   ${result.context.toString()}`)
+                    console.log(`${padding}  context:   ${result.context.toString()}`)
                 }
                 break
             case "textStyle":
@@ -80,11 +80,11 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
                     let styleName = `<${sharedSymbol.name}>`
                     let styleContext = baseContext.append(styleName)
                     let result = {
-                        context: styleContext,
-                        contextOLD: contextFromNestedContexts(styleContext, nestedContexts),
+                        contextSimple: styleContext,
+                        context: contextFromNestedContexts(styleContext, nestedContexts),
                         layer: override }
                     res.push(result)
-                    console.log(`    context:   ${result.context.toString()}`)
+                    console.log(`${padding}  context:   ${result.context.toString()}`)
                 } 
                 break
         }
@@ -100,9 +100,11 @@ const debugOverride = (override, lookup) => {
     if (item) name = item.name 
     let parent = "<unknown>"
     if (override.affectedLayer && override.affectedLayer.master) parent = `${override.affectedLayer.master.name}`
-    console.log(`  override type:${__pad(override.property,12)} levels:${levels} parent:"${__pad(parent,20)}"     name:${name}`)
+    let padding = ""
+    while (padding.length < (levels * 2)) { padding += " "; };
+    console.log(`${padding}override type:${__pad(override.property,12)} levels:${levels} parent:"${__pad(parent,20)}"     name:${name}`)
     
-    return null
+    return padding
 }
 
 const __pad = (str, size) => {
@@ -114,10 +116,8 @@ const getContextFromName = (existing, layer) => {
     let name = layer.name
     if (layer.master) name = layer.master.name
     if (existing == null) {
-        console.log(`getContextFromName - creating new "${name}"`)
         return new VariableSizeContext(name)
     }
-    console.log(`getContextFromName - merging "${name}" into "${existing.toString()}" > "${existing.type}"`)
     return existing.append(name)
 }
 
