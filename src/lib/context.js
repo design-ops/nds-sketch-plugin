@@ -18,9 +18,10 @@ export class VariableSizeContext {
     append(str) {
         return new VariableSizeContext(this.toString()+"/"+str)
     }
+    // merge & duplicate should become obsolete once transition is complete
     merge(str) {
         // could be smarter!
-        return new VariableSizeContext(this.toString()+"/M:"+str)
+        return new VariableSizeContext(this.toString()+"/{"+str+"}")
     }
     duplicate() {
         return new VariableSizeContext(this.toString())
