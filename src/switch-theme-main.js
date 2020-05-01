@@ -3,13 +3,25 @@ import { createTextLayerSymbolLookup } from "./lib/library"
 import { createUI, closeUI, commandToUI } from './lib/ui'
 import { getIdentifiersIn } from './lib/identifier'
 import { getSelectedLayers } from './lib/layers'
-import { Context } from './lib/context'
+import { FixedSizeContext } from './lib/context'
 
 const UIIdentifier = 'switchthemelibrary.webview'
 
 export default function onRun() {
-  console.log("[Start Switch Theme Library Plugin]")
-  
+  console.log("[Start Switch Theme Library Plugin] !!")
+  try {
+    startPlugin();
+  } catch (e){
+    if (e instanceof ReferenceError) {
+      console.log(`exception thrown: ${e.message} in ${e.fileName} on ${e.lineNumber}`)
+      console.log(e.stack.split("\n")) // formats it better as an array :-/
+    } else {
+      console.log(`exception thrown: ${e}`);
+    }
+  }
+}
+
+function startPlugin() {
   closeUI(UIIdentifier)
   createUI(UIIdentifier, {
     onLoad: () => {
@@ -23,7 +35,7 @@ export default function onRun() {
 }
 
 const showSelectLibrary = () => {
-  console.log("showSelectLibrary...")
+  console.log("showSelectLibrary")
   let libs = Library.getLibraries()
   let libNames = []
   libs.forEach( lib => {
@@ -36,10 +48,11 @@ const showSelectLibrary = () => {
 }
 
 const getIdentifiers = () => {
-  Context.validNumberOfSegments = 4
+  FixedSizeContext.validNumberOfSegments = 4
   const document = Document.getSelectedDocument()
   const targetLayer = getSelectedLayers(document)
   const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document)
+  console.log("getIdentifiers - getIdentifiersIn")
   const ids = getIdentifiersIn(targetLayer, lookup)
   console.log("// items to replace -----------------------------------------------------------------")
   ids.forEach( item => {

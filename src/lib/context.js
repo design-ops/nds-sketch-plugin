@@ -1,11 +1,11 @@
 
-export class ContextType {
+export class FixedSizedContextType {
     static ATOM = "ContextType.ATOM"
     static SWITCH = "ContextType.SWITCH"
     static INVALID = "ContextType.INVALID"
 }
 
-export class Context {
+export class FixedSizeContext {
     
     static validNumberOfSegments = 3
 
@@ -21,10 +21,10 @@ export class Context {
                 return str.substr(2).split("/")
             }
             let arr = str.split("/")
-            if (arr.length == Context.validNumberOfSegments) return arr
+            if (arr.length == FixedSizeContext.validNumberOfSegments) return arr
             // handle atoms that start with a '/'
             arr = str.substr(1).split("/")
-            if (arr.length == Context.validNumberOfSegments) return arr
+            if (arr.length == FixedSizeContext.validNumberOfSegments) return arr
             return null
         }
         let arr = getArray(str)
@@ -37,12 +37,12 @@ export class Context {
     }
 
     _typeFromString(str) {
-        if (str.substr(0,1) == "!") return ContextType.INVALID
-        if (str.substr(0,2) == "_/") return ContextType.SWITCH
-        if (str.split("/").length == Context.validNumberOfSegments) return ContextType.ATOM
+        if (str.substr(0,1) == "!") return FixedSizedContextType.INVALID
+        if (str.substr(0,2) == "_/") return FixedSizedContextType.SWITCH
+        if (str.split("/").length == FixedSizeContext.validNumberOfSegments) return FixedSizedContextType.ATOM
         // handle atoms that start with a '/'
-        if (str.substr(1).split("/").length == Context.validNumberOfSegments) return ContextType.ATOM
-        return ContextType.INVALID
+        if (str.substr(1).split("/").length == FixedSizeContext.validNumberOfSegments) return FixedSizedContextType.ATOM
+        return FixedSizedContextType.INVALID
     }
 
     get type() {
@@ -51,16 +51,16 @@ export class Context {
 
     toString() {
         switch(this._type){
-            case ContextType.SWITCH:
+            case FixedSizedContextType.SWITCH:
                 return `_/${this._arr.join("/")}`
-            case ContextType.ATOM:
+            case FixedSizedContextType.ATOM:
                 return this._arr.join("/")
         }
         return ""
     }
 
     duplicate() {
-        return new Context(this.toString())
+        return new FixedSizeContext(this.toString())
     }
 
     merge(str) {
@@ -74,8 +74,8 @@ export class Context {
                 if (newVal != "*") arr[i] = newVal
             }
         }
-        if (arr.length == Context.validNumberOfSegments) return new Context(arr.join("/"))
-        return new Context(`_/${arr.join("/")}`)
+        if (arr.length == FixedSizeContext.validNumberOfSegments) return new FixedSizeContext(arr.join("/"))
+        return new FixedSizeContext(`_/${arr.join("/")}`)
     }
 
     mergeLastSegmentOLD(str) {
@@ -95,8 +95,8 @@ export class Context {
     }
 
     mergeLastSegment(str) {
-        let context = new Context(str)
-        if (context.type == ContextType.ATOM) {
+        let context = new FixedSizeContext(str)
+        if (context.type == FixedSizedContextType.ATOM) {
             let arr = context.toString().split("/")
             let max = arr.length-1
             for(var i=0;i<max;i++) {

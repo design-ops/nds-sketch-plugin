@@ -3,24 +3,29 @@ import {
     contextFromNestedContexts 
 } from './nested'
 import { 
-    Context, 
-    ContextType 
+    FixedSizeContext, 
+    FixedSizedContextType 
 } from './context'
 
 export const getIdentifiersIn = (layer, lookup) => {
     let res = []
+    console.log(`getIdentifiersIn:: ${layer.name}`)
     layer.layers.forEach( sublayer => {
+        console.log(`getIdentifiersIn:: sublayer ${sublayer.name}`)
         let context = getContextFromName(null, sublayer)
         let nested = getNestedContexts(sublayer, context, lookup)
         res = res.concat( nested )
     })
+    console.log(`getIdentifiersIn.. done`)
     return res
 }
 
 const getNestedContexts = (layer, context, lookup) => {
     let res = []
+    console.log(`getNestedContexts "${layer.name}"`)
     if (layer.layers == undefined) return
     layer.layers.forEach( sublayer => {
+        console.log(`getNestedContexts:: "${sublayer.name}" / "${sublayer.type}"`)
         let newContext = getContextFromName(context, sublayer)
         console.log(`${sublayer.type} >> '${newContext.toString()}' '${sublayer.name}'`)
         if (sublayer.type == "Group") {
@@ -32,12 +37,12 @@ const getNestedContexts = (layer, context, lookup) => {
                 let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
                 res = res.concat( nested )
             } else {
-                if (newContext.type == ContextType.ATOM){
+                if (newContext.type == FixedSizedContextType.ATOM){
                     res.push({context: newContext, layer: sublayer})
                 }
             }
         } else {
-            if (newContext.type == ContextType.ATOM){
+            if (newContext.type == FixedSizedContextType.ATOM){
                 res.push({context: newContext, layer: sublayer})
             }
         }
@@ -62,8 +67,8 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
                 // then it's valid to be swapped.
                 if (override.affectedLayer && override.affectedLayer.master){
                     const symbolName = override.affectedLayer.master.name
-                    let symbolContext = new Context(symbolName)
-                    if (symbolContext.type == ContextType.ATOM) {
+                    let symbolContext = new FixedSizeContext(symbolName)
+                    if (symbolContext.type == FixedSizedContextType.ATOM) {
                         symbolContext = baseContext.duplicate().mergeLastSegment(symbolName)
                         let result = {
                             context: contextFromNestedContexts(symbolContext, nestedContexts),
@@ -78,8 +83,8 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
                 let styleName = ""
                 if (sharedSymbol && sharedSymbol.name) styleName = sharedSymbol.name
                 // need to get the atom out of styleName :-/
-                let styleContext = new Context(styleName)
-                if (styleContext.type == ContextType.ATOM) {
+                let styleContext = new FixedSizeContext(styleName)
+                if (styleContext.type == FixedSizedContextType.ATOM) {
                     styleContext = baseContext.duplicate().mergeLastSegment(styleName)
                     let result = {
                         context: contextFromNestedContexts(styleContext, nestedContexts),
@@ -117,7 +122,9 @@ const getContextFromName = (existing, layer) => {
     let name = layer.name
     if (layer.master) name = layer.master.name
     if (existing == null) {
-        return new Context(name)
+        console.log(`getContextFromName - creating new "${name}"`)
+        return new FixedSizeContext(name)
     }
+    console.log(`getContextFromName - merging "${name}" into "${existing.toString()}"`)
     return existing.duplicate().merge(name)
 }
