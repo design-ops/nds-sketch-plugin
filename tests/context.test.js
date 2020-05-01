@@ -128,7 +128,9 @@ test('types - switch', () => {
     expect(id5.type).toEqual(FixedSizedContextType.INVALID)
 })
 
-test('name with --radius at the end', () => {
-    let id1 = new FixedSizeContext("_/section/organism")
-    
+test('merge into an invalid context', () => {
+    let id1 = new FixedSizeContext("some random string")
+    expect(id1.type).toEqual(FixedSizedContextType.INVALID)
+    let id2 = id1.merge("_/well/formed/string")
+    console.log(id2.toString())
 })

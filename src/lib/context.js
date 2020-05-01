@@ -16,7 +16,7 @@ export class FixedSizeContext {
 
     _arrayFromString(str) {
         const getArray = (str) => {
-            if (str.substr(0,1) == "!") return null
+            if (str.substr(0,1) == "!") return []
             if (str.substr(0,2) == "_/") {
                 return str.substr(2).split("/")
             }
@@ -25,7 +25,7 @@ export class FixedSizeContext {
             // handle atoms that start with a '/'
             arr = str.substr(1).split("/")
             if (arr.length == FixedSizeContext.validNumberOfSegments) return arr
-            return null
+            return []
         }
         let arr = getArray(str)
         if (Array.isArray(arr)){
