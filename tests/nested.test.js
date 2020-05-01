@@ -5,6 +5,7 @@ test('nesting', () => {
     let nc2 = new NestedContext(2, "")
     let nc3 = new NestedContext(3, "")
     let nc4 = new NestedContext(2, "")
+    let nc5 = new NestedContext(2, "")
     let arr = []
 
     arr = manageNesting(arr, nc1)
@@ -22,5 +23,9 @@ test('nesting', () => {
     arr = manageNesting(arr, nc4)
     expect(arr.length).toEqual(2)
     expect(arr).toEqual([nc1, nc4])
+
+    arr = manageNesting(arr, nc5)
+    expect(arr.length).toEqual(2)
+    expect(arr).toEqual([nc1, nc5])
 
 })
