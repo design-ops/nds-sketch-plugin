@@ -6,3 +6,18 @@ test('append context', () => {
     expect(id1.toString()).toEqual("section")
     expect(id2.toString()).toEqual("section/organism")
 })
+
+test('append component context', () => {
+    let id1 = new VariableSizeContext("_section")
+    let id2 = id1.append("_organism")
+    expect(id1.toString()).toEqual("section")
+    expect(id2.toString()).toEqual("section/organism")
+})
+
+test('appendLast', () => {
+    let id1 = new VariableSizeContext("_section")
+    let id2 = id1.appendLast("organism/element/atom")
+    expect(id1.toString()).toEqual("section")
+    expect(id2.toString()).toEqual("section/atom")
+})
+
