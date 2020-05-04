@@ -4,20 +4,15 @@ import {
 } from './nested'
 import { 
     VariableSizeContext,
-    FixedSizeContext, 
-    FixedSizedContextType 
 } from './context'
 
 export const getIdentifiersIn = (layer, lookup) => {
     let res = []
-    console.log(`getIdentifiersIn:: ${layer.name}`)
     layer.layers.forEach( sublayer => {
-        console.log(`getIdentifiersIn:: sublayer ${sublayer.name}`)
         let context = getContextFromName(null, sublayer)
         let nested = getNestedContexts(sublayer, context, lookup)
         res = res.concat( nested )
     })
-    console.log(`getIdentifiersIn.. done`)
     return res
 }
 
@@ -26,7 +21,7 @@ const getNestedContexts = (layer, context, lookup) => {
     if (layer.layers == undefined) return
     layer.layers.forEach( sublayer => {
         let newContext = getContextFromName(context, sublayer)
-        console.log(`${sublayer.type} >> '${newContext.toString()}' '${sublayer.name}'`)
+        console.log(`"${sublayer.type}" >> "${newContext.toString()}" "${sublayer.name}"`)
         if (sublayer.type == "Group") {
             let nested = getNestedContexts(sublayer, newContext, lookup)
             res = res.concat( nested )
@@ -36,16 +31,22 @@ const getNestedContexts = (layer, context, lookup) => {
                 let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
                 res = res.concat( nested )
             } else {
-                // check used to exist here
-                if (newContext != context){
+                // only add layers that have shared styles
+                if (sublayer.sharedStyle != null){
+                    console.log(`  context: ${newContext.toString()}`)
+                    res.push({context: newContext, layer: sublayer})
+                } else {
+                    console.log(`  context: none (no sharedStyle)`)
                 }
-                res.push({context: newContext, layer: sublayer})
             }
         } else {
-            // check used to exist here
-            if (newContext != context) {
+            // only add layers that have shared styles
+            if (sublayer.sharedStyle != null) {
+                console.log(`  context: ${newContext.toString()}`)
+                res.push({context: newContext, layer: sublayer})
+            } else {
+                console.log(`  context: none (no sharedStyle)`)
             }
-            res.push({context: newContext, layer: sublayer})
         }
     })
     return res
