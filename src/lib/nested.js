@@ -42,10 +42,8 @@ export const updateNestedContextsFromOverride = (nestedContexts, override) => {
 
 export const contextFromNestedContexts = (baseContext, nestedContexts) => {
     let context = baseContext.duplicate()
-    let debug = []
     nestedContexts.forEach( nc => {
-        context = context.merge(nc.info)
-        debug.push( nc.info )
+        if (nc.info != "") context = context.append(nc.info)
     })
     return context
 }

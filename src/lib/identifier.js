@@ -64,28 +64,30 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
             case "symbolID":
                 nestedContexts = updateNestedContextsFromOverride(nestedContexts, override)
                 if (override.affectedLayer && override.affectedLayer.master){
-                    const symbolName = `<${override.affectedLayer.master.name}>`
-                    let symbolContext = baseContext.append(symbolName)
-                    let result = {
-                        contextSimple: symbolContext,
-                        context: contextFromNestedContexts(symbolContext, nestedContexts),
-                        layer: override }
-                    res.push(result)
-                    console.log(`${padding}  context:   ${result.context.toString()}`)
+                    // only operate if it's not got an _ at the start
+                    const symbolName = `${override.affectedLayer.master.name}`
+                    if (symbolName.charAt(0) != "_") {
+                        let symbolContext = contextFromNestedContexts(baseContext, nestedContexts).appendLast(`<${symbolName}>`)
+                        let result = {
+                            context: symbolContext,
+                            layer: override }
+                        res.push(result)
+                        console.log(`${padding}context:   ${result.context.toString()}`)
+                    }
                 }
                 break
             case "textStyle":
             case "layerStyle":
+                nestedContexts = updateNestedContextsFromOverride(nestedContexts, override)
                 if (sharedSymbol && sharedSymbol.name){
-                    let styleName = `<${sharedSymbol.name}>`
-                    let styleContext = baseContext.append(styleName)
+                    let styleName = `${sharedSymbol.name}`
+                    let styleContext = contextFromNestedContexts(baseContext, nestedContexts).appendLast(styleName)
                     let result = {
-                        contextSimple: styleContext,
-                        context: contextFromNestedContexts(styleContext, nestedContexts),
+                        context: styleContext,
                         layer: override }
                     res.push(result)
-                    console.log(`${padding}  context:   ${result.context.toString()}`)
-                } 
+                    console.log(`${padding}context:   ${result.context.toString()}`)
+                }
                 break
         }
     })

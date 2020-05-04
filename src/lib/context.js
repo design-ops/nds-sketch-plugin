@@ -10,7 +10,10 @@ export class VariableSizeContext {
         this._arr = this._arrayFromString(str)
     }
     _arrayFromString(str) {
-        return str.split("/")
+        return str.split("/").map( entry => {
+            if (entry.charAt(0) == "_") return entry.substr(1)
+            return entry
+        })
     }
     toString() {
         return this._arr.join("/")
@@ -18,10 +21,14 @@ export class VariableSizeContext {
     append(str) {
         return new VariableSizeContext(this.toString()+"/"+str)
     }
+    appendLast(str) {
+        const arr = this._arrayFromString(str)
+        return this.append(arr[arr.length-1])
+    }
     // merge & duplicate should become obsolete once transition is complete
     merge(str) {
-        // could be smarter!
-        return new VariableSizeContext(this.toString()+"/{"+str+"}")
+        //return new VariableSizeContext(this.toString()+"/{"+str+"}")
+        return this.append(`{${str}}`)
     }
     duplicate() {
         return new VariableSizeContext(this.toString())
