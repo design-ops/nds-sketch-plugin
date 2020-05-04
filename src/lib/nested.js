@@ -1,4 +1,3 @@
-import { FixedSizeContext, FixedSizedContextType } from "./context"
 
 // export is only for jest
 // @TODO switch to use rewire to expose this
@@ -41,7 +40,7 @@ export const updateNestedContextsFromOverride = (nestedContexts, override) => {
 }
 
 export const contextFromNestedContexts = (baseContext, nestedContexts) => {
-    let context = baseContext.duplicate()
+    let context = baseContext
     nestedContexts.forEach( nc => {
         if (nc.info != "") context = context.append(nc.info)
     })

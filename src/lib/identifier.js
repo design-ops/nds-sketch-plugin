@@ -23,10 +23,8 @@ export const getIdentifiersIn = (layer, lookup) => {
 
 const getNestedContexts = (layer, context, lookup) => {
     let res = []
-    console.log(`getNestedContexts "${layer.name}"`)
     if (layer.layers == undefined) return
     layer.layers.forEach( sublayer => {
-        console.log(`getNestedContexts:: "${sublayer.name}" / "${sublayer.type}"`)
         let newContext = getContextFromName(context, sublayer)
         console.log(`${sublayer.type} >> '${newContext.toString()}' '${sublayer.name}'`)
         if (sublayer.type == "Group") {
@@ -38,14 +36,16 @@ const getNestedContexts = (layer, context, lookup) => {
                 let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
                 res = res.concat( nested )
             } else {
-                if (newContext.type == FixedSizedContextType.ATOM){
-                    res.push({context: newContext, layer: sublayer})
+                // check used to exist here
+                if (newContext != context){
                 }
-            }
-        } else {
-            if (newContext.type == FixedSizedContextType.ATOM){
                 res.push({context: newContext, layer: sublayer})
             }
+        } else {
+            // check used to exist here
+            if (newContext != context) {
+            }
+            res.push({context: newContext, layer: sublayer})
         }
     })
     return res
@@ -53,7 +53,7 @@ const getNestedContexts = (layer, context, lookup) => {
 
 const getContextsFromOverrides = (overrides, context, lookup) => {
     console.log("OVERRIDES ---------------!!")
-    let baseContext = context; // context.duplicate() //
+    let baseContext = context;
     let nestedContexts = []
     let res = []
     overrides.forEach( override => {
@@ -121,15 +121,4 @@ const getContextFromName = (existing, layer) => {
         return new VariableSizeContext(name)
     }
     return existing.append(name)
-}
-
-const getContextFromNameOLD = (existing, layer) => {
-    let name = layer.name
-    if (layer.master) name = layer.master.name
-    if (existing == null) {
-        console.log(`getContextFromName - creating new "${name}"`)
-        return new FixedSizeContext(name)
-    }
-    console.log(`getContextFromName - merging "${name}" into "${existing.toString()}" > "${existing.type}"`)
-    return existing.duplicate().merge(name)
 }
