@@ -12,14 +12,19 @@ export const getIdentifiersIn = (layer, lookup) => {
 }
 
 const getNestedContexts = (layer, context, lookup) => {
+
     let res = []
     if (layer.layers == undefined) return
     layer.layers.forEach( sublayer => {
+
         let newContext = getContextFromName(context, sublayer)
+
         console.log(`"${sublayer.type}" >> "${newContext.toString()}" "${sublayer.name}"`)
+
         if (sublayer.type == "Group") {
             let nested = getNestedContexts(sublayer, newContext, lookup)
             res = res.concat( nested )
+
         } else if (sublayer.type == "SymbolInstance") {
             console.log(`  master:`, sublayer.master.name)
             if (sublayer.overrides.length > 0){
@@ -38,17 +43,22 @@ const getNestedContexts = (layer, context, lookup) => {
             // only add layers that have shared styles
             if (sublayer.sharedStyle != null) {
                 console.log(`  context: ${newContext.toString()}`)
+                console.log(`  type: ${sublayer.type}`)
+                console.log(`  sharedStyleId: ${sublayer.sharedStyleId}`)
+
                 res.push({context: newContext, layer: sublayer})
             } else {
                 console.log(`  context: none (no sharedStyle)`)
             }
+
         }
+
     })
     return res
 }
 
 const getContextsFromOverrides = (overrides, context, lookup) => {
-    console.log("OVERRIDES ---------------!!")
+    console.log("OVERRIDES ---------------")
     let baseContext = context;
     let nestedContexts = []
     let res = []
