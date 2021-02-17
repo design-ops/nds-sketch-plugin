@@ -54,7 +54,7 @@ const showSelectLibrary = () => {
     {
       description: "Swap out the current theme for a new one.",
       type: UI.INPUT_TYPE.selection,
-      possibleValues: libNames.map(el => el.name),
+      possibleValues: libNames.map(el => el.name + " (" + el.id.slice(-6) + ")"),
     },
     (err, value) => {
       if (err) {
@@ -62,7 +62,7 @@ const showSelectLibrary = () => {
         console.log("[Canceled]")
         return
       } else {
-        const found = libNames.find(el => el.name == value)
+        const found = libNames.find(el => el.name + " (" + el.id.slice(-6) + ")" == value)
         console.log("[Selected Library: " + found.name + " ("+ found.id +")]")
       }
     }
