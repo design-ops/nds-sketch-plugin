@@ -1,4 +1,4 @@
-import { Document, Library } from "sketch";
+import { Document, Library, UI } from "sketch";
 import { createTextLayerSymbolLookup } from "./lib/library"
 import { createUI, closeUI, commandToUI } from './lib/ui'
 import { getIdentifiersIn } from './lib/identifier'
@@ -7,7 +7,8 @@ import { getSelectedLayers } from './lib/layers'
 const UIIdentifier = 'switchthemelibrary.webview'
 
 export default function onRun() {
-  console.log("[Start Switch Theme Library Plugin] !!")
+  console.log("------------------------------")
+  console.log("[Initialise Plugin]")
   try {
     startPlugin();
   } catch (e){
@@ -21,29 +22,62 @@ export default function onRun() {
 }
 
 function startPlugin() {
-  closeUI(UIIdentifier)
-  createUI(UIIdentifier, {
-    onLoad: () => {
-      showSelectLibrary()
-    },
-    onSelectLibrary: (l) => {
-      console.log(`Selected library with id '${l}'`)
-      getIdentifiers()
-    }
-  })
+  showSelectLibrary()
+  // closeUI(UIIdentifier)
+  // createUI(UIIdentifier, {
+  //   onLoad: () => {
+  //     showSelectLibrary()
+  //   },
+  //   onSelectLibrary: (l) => {
+  //     console.log(`Selected library with id '${l}'`)
+  //     getIdentifiers()
+  //   }
+  // })
 }
 
 const showSelectLibrary = () => {
-  console.log("showSelectLibrary")
+
+  console.log("[Get Enabled Libraries]")
   let libs = Library.getLibraries()
   let libNames = []
   libs.forEach( lib => {
     if (lib.enabled){
-      // console.log(lib)
-      libNames.push({name: lib.name, id: lib.id})
+      console.log(" - " + lib.name + " (" + lib.id + ")")
+      libNames.push({name: lib.name, id: lib.id, type: lib.libraryType})
     }
   })
-  commandToUI(UIIdentifier, "showSelectLibrary", libNames)
+
+  console.log("[Show Select Library]")
+
+  UI.getInputFromUser(
+    "Select a Theme Library",
+    {
+      description: "Swap out the current theme for a new one.",
+      type: UI.INPUT_TYPE.selection,
+      possibleValues: libNames.map(el => el.name),
+    },
+    (err, value) => {
+      if (err) {
+        // most likely the user canceled the input
+        console.log("[Canceled]")
+        return
+      } else {
+        const found = libNames.find(el => el.name == value)
+        console.log("[Selected Library: " + found.name + " ("+ found.id +")]")
+      }
+    }
+  )
+
+  //
+  // let libs = Library.getLibraries()
+  // let libNames = []
+  // libs.forEach( lib => {
+  //   if (lib.enabled){
+  //     // console.log(lib)
+  //     libNames.push({name: lib.name, id: lib.id})
+  //   }
+  // })
+  // commandToUI(UIIdentifier, "showSelectLibrary", libNames)
 }
 
 const getIdentifiers = () => {

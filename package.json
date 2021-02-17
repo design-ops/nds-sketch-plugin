@@ -1,5 +1,6 @@
 {
   "name": "switchthemelibrary",
+  "decription": "Swap out NDS Themes",
   "version": "0.1.0",
   "engines": {
     "sketch": ">=3.0"
@@ -35,14 +36,15 @@
   "dependencies": {
     "babel-jest": "^25.2.4",
     "babel-preset-env": "^1.7.0",
-    "sketch-module-web-view": "^3.1.4"
+    "sketch-module-web-view": "^3.1.4",
+    "skpm": "^1.3.2"
   },
   "babel": {
     "presets": [
       "@babel/preset-env"
     ],
     "plugins": [
-        "@babel/plugin-proposal-class-properties"
+      "@babel/plugin-proposal-class-properties"
     ]
   },
   "author": "atom.oil"

@@ -1,10 +1,5 @@
-import { 
-    updateNestedContextsFromOverride, 
-    contextFromNestedContexts 
-} from './nested'
-import { 
-    VariableSizeContext,
-} from './context'
+import { updateNestedContextsFromOverride, contextFromNestedContexts } from './nested'
+import { VariableSizeContext } from './context'
 
 export const getIdentifiersIn = (layer, lookup) => {
     let res = []
@@ -100,13 +95,13 @@ const debugOverride = (override, lookup) => {
     let levels = override.path.split("/").length
     let item = lookup[id]
     let name = "<unknown>"
-    if (item) name = item.name 
+    if (item) name = item.name
     let parent = "<unknown>"
     if (override.affectedLayer && override.affectedLayer.master) parent = `${override.affectedLayer.master.name}`
     let padding = ""
     while (padding.length < (levels * 2)) { padding += " "; };
     console.log(`${padding}override type:${__pad(override.property,12)} levels:${levels} parent:"${__pad(parent,20)}"     name:${name}`)
-    
+
     return padding
 }
 
