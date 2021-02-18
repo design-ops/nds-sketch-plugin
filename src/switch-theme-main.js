@@ -28,14 +28,14 @@ const showSelectLibrary = () => {
 
   libs.forEach( lib => {
     if (lib.enabled){
-      console.log(" - " + lib.name + " (" + lib.id.slice(-6) + ")")
+      // console.log(" - " + lib.name + " (" + lib.id.slice(-6) + ")")
       libNames.push({name: lib.name, id: lib.id, type: lib.libraryType, lastModified: lib.lastModifiedAt})
     }
   })
 
   // console.log(libNames)
 
-  console.log("[Show Select Library]")
+  console.log("[Show Select Library Window]")
 
   UI.getInputFromUser(
     "Select a Theme Library",
@@ -63,7 +63,7 @@ const getIdentifiers = () => {
   const document = Document.getSelectedDocument()
   const targetLayer = getSelectedLayers(document)
   const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document)
-  console.log("[getIdentifiers - getIdentifiersIn]")
+  console.log("[Get Identifiers]")
   const ids = getIdentifiersIn(targetLayer, lookup)
   console.log("/// items to replace -----------------------------------------------------------------")
   ids.forEach( item => {

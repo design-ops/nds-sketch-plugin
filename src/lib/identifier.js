@@ -36,7 +36,9 @@ const getNestedContexts = (layer, context, lookup) => {
             res = res.concat( nested )
 
         } else if (sublayer.type == "SymbolInstance") { // If it's a Symbol
+
             console.log(`  master:`, sublayer.master.name)
+
             if (sublayer.overrides.length > 0){
                 let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
                 res = res.concat( nested )
