@@ -11,6 +11,11 @@ export const getIdentifiersIn = (layer, lookup) => {
     return res
 }
 
+// Things to do
+// 1. We need to get the Style Name (Token only)
+// 2. Groups should not be added to the ContextType (clients/Group/subtitle >  clients/subtitle)
+// 3.
+
 const getNestedContexts = (layer, context, lookup) => {
 
     let res = []
@@ -21,11 +26,15 @@ const getNestedContexts = (layer, context, lookup) => {
 
         console.log(`"${sublayer.type}" >> "${newContext.toString()}" "${sublayer.name}"`)
 
-        if (sublayer.type == "Group") {
+        if (sublayer.type == "Group") { // If it's a group, re-run with the new context
+
+            // Remove the Group name from the context
+            newContext._arr.pop()
+
             let nested = getNestedContexts(sublayer, newContext, lookup)
             res = res.concat( nested )
 
-        } else if (sublayer.type == "SymbolInstance") {
+        } else if (sublayer.type == "SymbolInstance") { // If it's a Symbol
             console.log(`  master:`, sublayer.master.name)
             if (sublayer.overrides.length > 0){
                 let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
@@ -39,14 +48,28 @@ const getNestedContexts = (layer, context, lookup) => {
                     console.log(`  context: none (no sharedStyle)`)
                 }
             }
-        } else {
+        } else { // If it's a Layer or Text style
             // only add layers that have shared styles
             if (sublayer.sharedStyle != null) {
-                console.log(`  context: ${newContext.toString()}`)
-                console.log(`  type: ${sublayer.type}`)
-                console.log(`  sharedStyleId: ${sublayer.sharedStyleId}`)
 
-                res.push({context: newContext, layer: sublayer})
+              console.log(`  Type: ${sublayer.type}`)
+              console.log(`  Style ID: ${sublayer.sharedStyleId}`)
+              console.log(`  Layer Context: ${newContext.toString()}`)
+              console.log(`  Style Name: ${sublayer.sharedStyle.name}`)
+
+              // Context of the layer
+              // Remove the token name because we only need the context.
+              newContext._arr.pop()
+
+              // Get Token name
+              // Get the actual shared style name
+              let thisToken = sublayer.sharedStyle.name.split('/').slice(-1)
+
+              // Create the new Token
+              let newToken = newContext + "/" + thisToken
+              console.log(`  Token: ${newToken}`)
+
+              res.push({context: newToken, layer: sublayer})
             } else {
                 console.log(`  context: none (no sharedStyle)`)
             }

@@ -25,12 +25,15 @@ const showSelectLibrary = () => {
   console.log("[Get Enabled Libraries]")
   let libs = Library.getLibraries()
   let libNames = []
+
   libs.forEach( lib => {
     if (lib.enabled){
       console.log(" - " + lib.name + " (" + lib.id.slice(-6) + ")")
-      libNames.push({name: lib.name, id: lib.id, type: lib.libraryType})
+      libNames.push({name: lib.name, id: lib.id, type: lib.libraryType, lastModified: lib.lastModifiedAt})
     }
   })
+
+  // console.log(libNames)
 
   console.log("[Show Select Library]")
 
@@ -64,6 +67,6 @@ const getIdentifiers = () => {
   const ids = getIdentifiersIn(targetLayer, lookup)
   console.log("/// items to replace -----------------------------------------------------------------")
   ids.forEach( item => {
-    console.log(`${item.context.toString()} >> ${item.layer.type}`)
+    console.log(`${item.context.toString()} (${item.layer.type})`)
   })
 }
