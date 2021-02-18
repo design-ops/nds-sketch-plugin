@@ -29,6 +29,7 @@ const getNestedContexts = (layer, context, lookup) => {
         if (sublayer.type == "Group") { // If it's a group, re-run with the new context
 
             // Remove the Group name from the context
+            // eg. 'artboard-name/Group' > 'artboard-name'
             newContext._arr.pop()
 
             let nested = getNestedContexts(sublayer, newContext, lookup)
@@ -52,22 +53,24 @@ const getNestedContexts = (layer, context, lookup) => {
             // only add layers that have shared styles
             if (sublayer.sharedStyle != null) {
 
-              console.log(`  Type: ${sublayer.type}`)
-              console.log(`  Style ID: ${sublayer.sharedStyleId}`)
-              console.log(`  Layer Context: ${newContext.toString()}`)
-              console.log(`  Style Name: ${sublayer.sharedStyle.name}`)
+              // console.log(`  Type: ${sublayer.type}`)
+              // console.log(`  Style ID: ${sublayer.sharedStyleId}`)
+              // console.log(`  Layer Context: ${newContext.toString()}`)
+              // console.log(`  Style Name: ${sublayer.sharedStyle.name}`)
 
               // Context of the layer
-              // Remove the token name because we only need the context.
+              // Remove the layer name because we only need the context.
+              // eg. `artboard-name/symbol-name/layer-name` > 'artboard-name/symbol-name'
               newContext._arr.pop()
 
               // Get Token name
               // Get the actual shared style name
+              // eg. 'artboard-name/symbol-name/token-name' > 'token-name'
               let thisToken = sublayer.sharedStyle.name.split('/').slice(-1)
 
               // Create the new Token
               let newToken = newContext + "/" + thisToken
-              console.log(`  Token: ${newToken}`)
+              // console.log(`  Token: ${newToken}`)
 
               res.push({context: newToken, layer: sublayer})
             } else {
