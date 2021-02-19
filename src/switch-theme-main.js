@@ -51,7 +51,7 @@ const showSelectLibrary = () => {
         return
       } else {
         const found = libNames.find(el => el.name + " (" + el.id.slice(-6) + ")" == value)
-        console.log("[Selected Library: " + found.name + " ("+ found.id.slice(-6) +")]")
+        console.log(`[Selected Library] - ${found.name} (${found.id.slice(-6)})`)
 
         getIdentifiers()
       }
@@ -65,8 +65,8 @@ const getIdentifiers = () => {
   const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document)
   console.log("[Get Identifiers]")
   const ids = getIdentifiersIn(targetLayer, lookup)
-  console.log("/// items to replace -----------------------------------------------------------------")
+  console.log("[Items to replace]")
   ids.forEach( item => {
-    console.log(`${item.context.toString()} (${item.layer.type})`)
+    console.log(`  [${item.layer.type}] - ${item.context.toString()}`)
   })
 }

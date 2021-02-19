@@ -24,7 +24,7 @@ const getNestedContexts = (layer, context, lookup) => {
 
         let newContext = getContextFromName(context, sublayer)
 
-        console.log(`"${sublayer.type}" >> "${newContext.toString()}" "${sublayer.name}"`)
+        console.log(`  [${sublayer.type}] - "${newContext.toString()}"`)
 
         if (sublayer.type == "Group") { // If it's a group, re-run with the new context
 
@@ -37,7 +37,8 @@ const getNestedContexts = (layer, context, lookup) => {
 
         } else if (sublayer.type == "SymbolInstance") { // If it's a Symbol
 
-            console.log(`  master:`, sublayer.master.name)
+            console.log(`    Layer Context: ${newContext.toString()}`)
+            console.log(`    Master: ${sublayer.master.name}`)
 
             if (sublayer.overrides.length > 0){
                 let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
@@ -75,9 +76,10 @@ const getNestedContexts = (layer, context, lookup) => {
               // console.log(`  Token: ${newToken}`)
 
               res.push({context: newToken, layer: sublayer})
-            } else {
-                console.log(`  context: none (no sharedStyle)`)
             }
+            // else {
+            //     console.log(`  context: none (no sharedStyle)`)
+            // }
 
         }
 
@@ -86,7 +88,7 @@ const getNestedContexts = (layer, context, lookup) => {
 }
 
 const getContextsFromOverrides = (overrides, context, lookup) => {
-    console.log("OVERRIDES ---------------")
+    console.log("[Symbol Overrides]")
     let baseContext = context;
     let nestedContexts = []
     let res = []
