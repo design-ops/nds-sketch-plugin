@@ -3,7 +3,7 @@ import { createTextLayerSymbolLookup } from "./lib/library"
 import { getIdentifiersIn } from './lib/identifier'
 import { getSelectedLayers } from './lib/layers'
 
-const UIIdentifier = 'switchthemelibrary.webview'
+// const UIIdentifier = 'switchthemelibrary.webview'
 
 export default function onRun() {
   console.log("------------------------------")
@@ -67,6 +67,10 @@ const getIdentifiers = () => {
   const ids = getIdentifiersIn(targetLayer, lookup)
   console.log("[Items to replace]")
   ids.forEach( item => {
-    console.log(`  [${item.layer.type}] - ${item.context.toString()}`)
+    if (item.layer.type == "Override") {
+      console.log(`  [${item.layer.type}: ${item.layer.affectedLayer.type}] - ${item.context.toString()}`)
+    } else {
+      console.log(`  [${item.layer.type}] - ${item.context.toString()}`)
+    }
   })
 }

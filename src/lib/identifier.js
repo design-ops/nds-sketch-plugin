@@ -1,3 +1,4 @@
+import { Document } from "sketch";
 import { updateNestedContextsFromOverride, contextFromNestedContexts } from './nested'
 import { VariableSizeContext } from './context'
 
@@ -12,9 +13,9 @@ export const getIdentifiersIn = (layer, lookup) => {
 }
 
 // Things to do
-// 1. We need to get the Style Name (Token only)
-// 2. Groups should not be added to the ContextType (clients/Group/subtitle >  clients/subtitle)
-// 3.
+// 1. DONE We need to get the Style Name (Token only)
+// 2. DONE Groups should not be added to the ContextType (clients/Group/subtitle >  clients/subtitle)
+// 3. We need to iterate through all the Symbol Overrides and repeat the above
 
 const getNestedContexts = (layer, context, lookup) => {
 
@@ -24,11 +25,11 @@ const getNestedContexts = (layer, context, lookup) => {
 
         let newContext = getContextFromName(context, sublayer)
 
-        console.log(`  [${sublayer.type}] - "${newContext.toString()}"`)
+        // console.log(`  [${sublayer.type}] - "${newContext.toString()}"`)
 
         if (sublayer.type == "Group") { // If it's a group, re-run with the new context
 
-            // Remove the Group name from the context
+            // Ignore the Group name from the context
             // eg. 'artboard-name/Group' > 'artboard-name'
             newContext._arr.pop()
 
@@ -37,29 +38,32 @@ const getNestedContexts = (layer, context, lookup) => {
 
         } else if (sublayer.type == "SymbolInstance") { // If it's a Symbol
 
-            console.log(`    Layer Context: ${newContext.toString()}`)
-            console.log(`    Master: ${sublayer.master.name}`)
+            // Add the current symbol to the array
+            // res.push({context: newContext, layer: sublayer})
 
             if (sublayer.overrides.length > 0){
+
                 let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
                 res = res.concat( nested )
+
             } else {
-                // only add layers that have shared styles
+                // Not entirely convinced we need this part of the script.
+                // This may mean it's an icon or other symbol from a theme.
+                // We should only add layers that have shared styles (?)
                 if (sublayer.sharedStyle != null){
-                    console.log(`  context: ${newContext.toString()}`)
+                    console.log(`    context: ${newContext.toString()}`)
                     res.push({context: newContext, layer: sublayer})
                 } else {
-                    console.log(`  context: none (no sharedStyle)`)
+                    // console.log(`    context: none (no sharedStyle)`)
+                    res.push({context: newContext, layer: sublayer})
+                    // console.log(sublayer.name)
                 }
             }
+
         } else { // If it's a Layer or Text style
+
             // only add layers that have shared styles
             if (sublayer.sharedStyle != null) {
-
-              // console.log(`  Type: ${sublayer.type}`)
-              // console.log(`  Style ID: ${sublayer.sharedStyleId}`)
-              // console.log(`  Layer Context: ${newContext.toString()}`)
-              // console.log(`  Style Name: ${sublayer.sharedStyle.name}`)
 
               // Context of the layer
               // Remove the layer name because we only need the context.
@@ -72,14 +76,10 @@ const getNestedContexts = (layer, context, lookup) => {
               let thisToken = sublayer.sharedStyle.name.split('/').slice(-1)
 
               // Create the new Token
-              let newToken = newContext + "/" + thisToken
-              // console.log(`  Token: ${newToken}`)
+              newContext._arr.push(thisToken)
 
-              res.push({context: newToken, layer: sublayer})
+              res.push({context: newContext, layer: sublayer})
             }
-            // else {
-            //     console.log(`  context: none (no sharedStyle)`)
-            // }
 
         }
 
@@ -88,67 +88,53 @@ const getNestedContexts = (layer, context, lookup) => {
 }
 
 const getContextsFromOverrides = (overrides, context, lookup) => {
-    console.log("[Symbol Overrides]")
+
     let baseContext = context;
     let nestedContexts = []
     let res = []
     overrides.forEach( override => {
         let id = override.value
         let sharedSymbol = lookup[id]
-        let padding = debugOverride(override, lookup)
-        switch( override.property ){
-            case "symbolID":
-                nestedContexts = updateNestedContextsFromOverride(nestedContexts, override)
-                if (override.affectedLayer && override.affectedLayer.master){
-                    // only operate if it's not got an _ at the start
-                    const symbolName = `${override.affectedLayer.master.name}`
-                    if (symbolName.charAt(0) != "_") {
-                        let symbolContext = contextFromNestedContexts(baseContext, nestedContexts).appendLast(`<${symbolName}>`)
-                        let result = {
-                            context: symbolContext,
-                            layer: override }
-                        res.push(result)
-                        console.log(`${padding}context:   ${result.context.toString()}`)
-                    }
-                }
-                break
-            case "textStyle":
-            case "layerStyle":
-                nestedContexts = updateNestedContextsFromOverride(nestedContexts, override)
-                if (sharedSymbol && sharedSymbol.name){
-                    let styleName = `${sharedSymbol.name}`
-                    let styleContext = contextFromNestedContexts(baseContext, nestedContexts).appendLast(styleName)
-                    let result = {
-                        context: styleContext,
-                        layer: override }
-                    res.push(result)
-                    console.log(`${padding}context:   ${result.context.toString()}`)
-                }
-                break
+
+        if (override.property == "symbolID") {
+
+          nestedContexts = updateNestedContextsFromOverride(nestedContexts, override, lookup)
+          if (override.affectedLayer && override.affectedLayer.master){
+              // only operate if it's not got an _ at the start
+              // We need to find a way to get the override value and replace that.
+              const symbolName = `${override.affectedLayer.master.name}`
+              if (symbolName.charAt(0) != "_") {
+
+                  let symbolContext = contextFromNestedContexts(baseContext, nestedContexts) //.appendLast(`${symbolName}`)
+
+                  let result = {context: symbolContext, layer: override }
+                  res.push(result)
+
+              }
+          }
+
+      } else if (override.property == "textStyle" || override.property == "layerStyle") {
+
+          nestedContexts = updateNestedContextsFromOverride(nestedContexts, override, lookup)
+          if (sharedSymbol && sharedSymbol.name){
+
+              let styleName = `${sharedSymbol.name}`
+              let styleContext = contextFromNestedContexts(baseContext, nestedContexts).appendLast(styleName)
+
+              let result = {context: styleContext, layer: override }
+              res.push(result)
+
+          }
         }
+
     })
     return res
 }
 
-const debugOverride = (override, lookup) => {
-    let id = override.value//path.split("/").pop()
-    let levels = override.path.split("/").length
-    let item = lookup[id]
-    let name = "<unknown>"
-    if (item) name = item.name
-    let parent = "<unknown>"
-    if (override.affectedLayer && override.affectedLayer.master) parent = `${override.affectedLayer.master.name}`
-    let padding = ""
-    while (padding.length < (levels * 2)) { padding += " "; };
-    console.log(`${padding}override type:${__pad(override.property,12)} levels:${levels} parent:"${__pad(parent,20)}"     name:${name}`)
-
-    return padding
-}
-
-const __pad = (str, size) => {
-    // pad it, and then truncate it (in case it's already too long)
-    return str.padEnd(size).substr(0, size)
-}
+// const __pad = (str, size) => {
+//     // pad it, and then truncate it (in case it's already too long)
+//     return str.padEnd(size).substr(0, size)
+// }
 
 const getContextFromName = (existing, layer) => {
     let name = layer.name

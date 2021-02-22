@@ -14,7 +14,7 @@ export const manageNesting = (arr, nestedcontext) => {
     // if the level is higher then add it
     // if the level is the same as an existing then replace
     // if the level is lower then remove until the arr
-    
+
     // AKA remove any that are below or on same level
     const target = nestedcontext.level
     for(var i = arr.length-1; i >= 0; i-- ) {
@@ -27,11 +27,19 @@ export const manageNesting = (arr, nestedcontext) => {
     return arr
 }
 
-export const updateNestedContextsFromOverride = (nestedContexts, override) => {
+export const updateNestedContextsFromOverride = (nestedContexts, override, lookup) => {
     let levels = override.path.split("/").length
     let contextName = ""
     if (override.affectedLayer && override.affectedLayer.master){
-        contextName = override.affectedLayer.master.name
+
+        // 1. We lookup the current value of the Override
+        // 2. If there is a value, we need to find it's name
+        // 3. We do a 'Split' because we only need the token name
+        if (lookup[override.value] != undefined) {
+          contextName = lookup[override.value].name.split('/').slice(-1)
+        }
+        // contextName = override.affectedLayer.master.name.split('/').slice(-1)
+
     }
     // const context = new Context(contextName)
     // if (context.type == ContextType.INVALID) return nestedContexts
