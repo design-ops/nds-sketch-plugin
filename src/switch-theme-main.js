@@ -1,4 +1,4 @@
-import { Document, Library, UI, SymbolInstance } from "sketch";
+import { Document, Library, UI } from "sketch";
 import { createTextLayerSymbolLookup } from "./lib/library"
 import { getIdentifiersIn } from './lib/identifier'
 import { getSelectedLayers } from './lib/layers'
@@ -44,26 +44,26 @@ const showSelectLibrary = () => {
     },
     (err, value) => {
       if (err) {
-        // Most likely the user canceled the input
         console.log("[Canceled]")
         return
       } else {
-
         const found = libNames.find(el => el.name + " (" + el.id.slice(-6) + ")" == value)
-        console.log(`[Selected Library] - ${found.name} (${found.id.slice(-6)})`)
-
-        getIdentifiers(found.id)
+        console.log(`[Selected Library] - "${found.name} (${found.id.slice(-6)})"`)
+        getIdentifiers(found.id, found.name)
       }
     }
   )
+
 }
 
-const getIdentifiers = (libraryLookupID) => {
+const getIdentifiers = (libraryLookupID, libraryName) => {
 
   const document = Document.getSelectedDocument()
   const targetLayer = getSelectedLayers(document)
   const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document)
   const lookupAgainst = createTextLayerSymbolLookup(Library.getLibraries().filter(library => library.id == libraryLookupID), document)
+
+  var tokenCount = 0
 
   console.log("[Get Identifiers]")
   const tokens = getIdentifiersIn(targetLayer, lookup)
@@ -94,10 +94,16 @@ const getIdentifiers = (libraryLookupID) => {
     // Token we found that matches
     if (newToken.name != undefined) {
       console.log(`   ∟ [${newToken.name}]`)
+      tokenCount++
     }
 
-
     // We need to replace 'token' with 'newToken'
+    if (tokenCount>0) {
+      UI.message(`🧑‍🎨 Succesfully switched ${tokenCount} Tokens to "${libraryName}"!`)
+    } else {
+      UI.message(`🧑‍🎨 No Tokens found in "${libraryName}"!`)
+    }
+
 
   })
 }
