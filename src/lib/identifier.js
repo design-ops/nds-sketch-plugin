@@ -1,4 +1,3 @@
-import { Document } from "sketch";
 import { updateNestedContextsFromOverride, contextFromNestedContexts } from './nested'
 import { VariableSizeContext } from './context'
 
@@ -15,7 +14,7 @@ export const getIdentifiersIn = (layer, lookup) => {
 // Things to do
 // 1. DONE We need to get the Style Name (Token only)
 // 2. DONE Groups should not be added to the ContextType (clients/Group/subtitle >  clients/subtitle)
-// 3. We need to iterate through all the Symbol Overrides and repeat the above
+// 3. DONE We need to iterate through all the Symbol Overrides and repeat the above
 
 const getNestedContexts = (layer, context, lookup) => {
 
@@ -130,11 +129,6 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
     })
     return res
 }
-
-// const __pad = (str, size) => {
-//     // pad it, and then truncate it (in case it's already too long)
-//     return str.padEnd(size).substr(0, size)
-// }
 
 const getContextFromName = (existing, layer) => {
     let name = layer.name
