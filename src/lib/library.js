@@ -3,7 +3,6 @@ import { Library } from "sketch";
 export const getAllLibraries = () => {
     //  array that will be populated with available libaries to import
     let options = [];
-    // NOT ANYMORE -> Check that library has the string "fabric-theme" included and if it does add it to availible libraries
     // Check to see if Library is enabled
     var libraries = Library.getLibraries();
 
