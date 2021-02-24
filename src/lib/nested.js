@@ -29,7 +29,7 @@ export const manageNesting = (arr, nestedcontext) => {
 
 export const updateNestedContextsFromOverride = (nestedContexts, override, lookup) => {
     let levels = override.path.split("/").length
-    let contextName = ""
+    let contextName = ''
     if (override.affectedLayer && override.affectedLayer.master){
 
         // 1. We lookup the current value of the Override
@@ -38,7 +38,6 @@ export const updateNestedContextsFromOverride = (nestedContexts, override, looku
         if (lookup[override.value] != undefined) {
           contextName = lookup[override.value].name.split('/').slice(-1)
         }
-        // contextName = override.affectedLayer.master.name.split('/').slice(-1)
 
     }
     // const context = new Context(contextName)
