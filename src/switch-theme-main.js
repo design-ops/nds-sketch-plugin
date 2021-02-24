@@ -35,6 +35,7 @@ const showSelectLibrary = () => {
 
   console.log("[Show Select Library Window]")
 
+  // If we use a custom UI, we can remove the trailing characters from the ID.
   UI.getInputFromUser(
     "Select a Theme Library",
     {
@@ -60,29 +61,37 @@ const getIdentifiers = (libraryLookupID, libraryName) => {
 
   const document = Document.getSelectedDocument()
   const targetLayer = getSelectedLayers(document)
-  const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document)
-  const lookupAgainst = createTextLayerSymbolLookup(Library.getLibraries().filter(library => library.id == libraryLookupID), document)
+  const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document) // Create Lookup for all Libraries
+  const lookupAgainst = createTextLayerSymbolLookup(Library.getLibraries().filter(library => library.id == libraryLookupID), document) // Create Lookup for the Selected Library
 
-  var tokenCount = 0
+  var tokenCount = 0 // Reset Token count
+  var tokenMissingCount = 0 // Reset Missing Token count
 
   console.log("[Get Identifiers]")
   const tokens = getIdentifiersIn(targetLayer, lookup)
+
   console.log("[Items to replace]")
   tokens.forEach( token => {
 
     var styleValue
     var currentScore = 0
     var newToken = {}
+    let notFound = ''
     for(var styleName in lookupAgainst) {
-        styleValue = lookupAgainst[styleName]
-        const getScore = matchScore(token.context.toString(), styleValue.name)
-        if (getScore > 0) {
-          if (getScore > currentScore) {
-            currentScore = getScore
-            newToken = styleValue
-          }
-        }
+      styleValue = lookupAgainst[styleName]
+      const getScore = matchScore(token.context.toString(), styleValue.name)
+
+      if (getScore > currentScore) {
+        currentScore = getScore
+        newToken = styleValue
+      }
+
     }
+
+    //
+    // This is where the actual swapping should take place
+    //
+
 
     // Token we want to replace
     if (token.layer.type == "Override") {
@@ -95,15 +104,21 @@ const getIdentifiers = (libraryLookupID, libraryName) => {
     if (newToken.name != undefined) {
       console.log(`   ∟ [${newToken.name}]`)
       tokenCount++
+    } else {
+      tokenMissingCount++
     }
 
     // We need to replace 'token' with 'newToken'
     if (tokenCount>0) {
-      UI.message(`🧑‍🎨 Succesfully switched ${tokenCount} Tokens to "${libraryName}"!`)
+      if (tokenMissingCount == 1) {
+        notFound = ` 🚨 ${tokenMissingCount} Token not found!`
+      } else if (tokenMissingCount > 1) {
+        notFound = ` 🚨 ${tokenMissingCount} Tokens not found!`
+      }
+      UI.message(`✅ Succesfully switched ${tokenCount} Tokens to "${libraryName}"!${notFound}`)
     } else {
-      UI.message(`🧑‍🎨 No Tokens found in "${libraryName}"!`)
+      UI.message(`✅ No Tokens found in "${libraryName}"!`)
     }
-
 
   })
 }

@@ -11,11 +11,6 @@ export const getIdentifiersIn = (layer, lookup) => {
     return res
 }
 
-// Things to do
-// 1. DONE We need to get the Style Name (Token only)
-// 2. DONE Groups should not be added to the ContextType (clients/Group/subtitle >  clients/subtitle)
-// 3. DONE We need to iterate through all the Symbol Overrides and repeat the above
-
 const getNestedContexts = (layer, context, lookup) => {
 
     let res = []
@@ -23,8 +18,6 @@ const getNestedContexts = (layer, context, lookup) => {
     layer.layers.forEach( sublayer => {
 
         let newContext = getContextFromName(context, sublayer)
-
-        // console.log(`  [${sublayer.type}] - "${newContext.toString()}"`)
 
         if (sublayer.type == "Group") { // If it's a group, re-run with the new context
 
@@ -37,26 +30,13 @@ const getNestedContexts = (layer, context, lookup) => {
 
         } else if (sublayer.type == "SymbolInstance") { // If it's a Symbol
 
-            // Add the current symbol to the array
-            // res.push({context: newContext, layer: sublayer})
-
-            if (sublayer.overrides.length > 0){
+            if (sublayer.overrides.length > 0){ // If the Symbol has Overrides
 
                 let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
                 res = res.concat( nested )
 
-            } else {
-                // Not entirely convinced we need this part of the script.
-                // This may mean it's an icon or other symbol from a theme.
-                // We should only add layers that have shared styles (?)
-                if (sublayer.sharedStyle != null){
-                    console.log(`    context: ${newContext.toString()}`)
-                    res.push({context: newContext, layer: sublayer})
-                } else {
-                    // console.log(`    context: none (no sharedStyle)`)
-                    res.push({context: newContext, layer: sublayer})
-                    // console.log(sublayer.name)
-                }
+            } else {  // If the Symbol does NOT have Overrides
+                res.push({context: newContext, layer: sublayer})
             }
 
         } else { // If it's a Layer or Text style
@@ -91,6 +71,7 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
     let baseContext = context;
     let nestedContexts = []
     let res = []
+
     overrides.forEach( override => {
         let id = override.value
         let sharedSymbol = lookup[id]
@@ -98,33 +79,35 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
         if (override.property == "symbolID") {
 
           nestedContexts = updateNestedContextsFromOverride(nestedContexts, override, lookup)
+
           if (override.affectedLayer && override.affectedLayer.master){
-              // only operate if it's not got an _ at the start
-              // We need to find a way to get the override value and replace that.
-              const symbolName = `${override.affectedLayer.master.name}`
+
+              let symbolName = `${override.affectedLayer.master.name}`
+
+              // Only operate if it's not got an _ at the start
               if (symbolName.charAt(0) != "_") {
 
-                  let symbolContext = contextFromNestedContexts(baseContext, nestedContexts) //.appendLast(`${symbolName}`)
+                let symbolContext = contextFromNestedContexts(baseContext, nestedContexts)
 
-                  let result = {context: symbolContext, layer: override }
-                  res.push(result)
+                let result = {context: symbolContext, layer: override }
+                res.push(result)
 
               }
           }
 
       } else if (override.property == "textStyle" || override.property == "layerStyle") {
 
-          nestedContexts = updateNestedContextsFromOverride(nestedContexts, override, lookup)
-          if (sharedSymbol && sharedSymbol.name){
+        nestedContexts = updateNestedContextsFromOverride(nestedContexts, override, lookup)
+        if (sharedSymbol && sharedSymbol.name){
 
-              let styleName = `${sharedSymbol.name}`
-              let styleContext = contextFromNestedContexts(baseContext, nestedContexts).appendLast(styleName)
+          let styleName = `${sharedSymbol.name}`
+          let styleContext = contextFromNestedContexts(baseContext, nestedContexts).appendLast(styleName)
 
-              let result = {context: styleContext, layer: override }
-              res.push(result)
+          let result = {context: styleContext, layer: override }
+          res.push(result)
 
-          }
         }
+      }
 
     })
     return res
