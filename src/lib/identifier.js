@@ -1,5 +1,6 @@
 import { updateNestedContextsFromOverride, contextFromNestedContexts } from './nested'
 import { VariableSizeContext } from './context'
+import { Document } from "sketch";
 
 export const getIdentifiersIn = (layer, lookup) => {
     let res = []
@@ -31,11 +32,34 @@ const getNestedContexts = (layer, context, lookup) => {
         } else if (sublayer.type == "SymbolInstance") { // If it's a Symbol
 
             if (sublayer.overrides.length > 0){ // If the Symbol has Overrides
-
                 let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
                 res = res.concat( nested )
-
             } else {  // If the Symbol does NOT have Overrides
+
+                // Context of the layer
+                // Since we're on an Artboard, and not inside a symbol, the context must be the artboard name.
+                // eg. `artboard-name/symbol-name/layer-name` > 'artboard-name'
+                newContext._arr.splice(1)
+
+                // Get Token name
+                // Get the actual shared style name
+                // eg. 'symbol-name/token-name' > 'token-name'
+                let thisToken
+
+                if (lookup[sublayer.symbolId] == undefined) {
+                  // If symbol is not found in any Library
+                  // Go look for a reference in the current document
+                  let thisDocument = Document.getSelectedDocument()
+                  let getSymbols = thisDocument.getSymbols()
+                  let thisSymbol = getSymbols.find(el => el.symbolId == sublayer.symbolId)
+                  thisToken = thisSymbol.name.split('/').slice(-1)
+                } else {
+                  thisToken = lookup[sublayer.symbolId].name.split('/').slice(-1)
+                }
+
+                // Create the new Token
+                newContext._arr.push(thisToken)
+
                 res.push({context: newContext, layer: sublayer})
             }
 
@@ -52,7 +76,8 @@ const getNestedContexts = (layer, context, lookup) => {
               // Get Token name
               // Get the actual shared style name
               // eg. 'artboard-name/symbol-name/token-name' > 'token-name'
-              let thisToken = sublayer.sharedStyle.name.split('/').slice(-1)
+              let thisToken
+              thisToken = sublayer.sharedStyle.name.split('/').slice(-1)
 
               // Create the new Token
               newContext._arr.push(thisToken)
@@ -72,11 +97,30 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
     let nestedContexts = []
     let res = []
 
+
     overrides.forEach( override => {
+
+
         let id = override.value
         let sharedSymbol = lookup[id]
 
         if (override.property == "symbolID") {
+
+          //
+          // Look for the symbol in the existing libraries
+          // console.log(`  [Looking for override.value: ${override.value}]`)
+          // let lookupValue = lookup[override.value]
+          //
+          // if (lookupValue == undefined) { // Symbol not found in any Library
+          //   console.log(`  [Missing!]`) // Go look for it in the document
+          //   let thisDocument = Document.getSelectedDocument()
+          //   let getSymbols = thisDocument.getSymbols()
+          //   let thisSymbol = getSymbols.find(el => el.symbolId == override.value)
+          //   console.log(`  [Found reference in Document: ${thisSymbol.name}]`)
+          // } else {
+          //   console.log(`  [Found!]`)
+          //   console.log(`  [Found symbol in Library: ${lookup[override.value].name}`)
+          // }
 
           nestedContexts = updateNestedContextsFromOverride(nestedContexts, override, lookup)
 
@@ -88,7 +132,7 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
               if (symbolName.charAt(0) != "_") {
 
                 let symbolContext = contextFromNestedContexts(baseContext, nestedContexts)
-
+                // console.log(symbolContext)
                 let result = {context: symbolContext, layer: override }
                 res.push(result)
 
