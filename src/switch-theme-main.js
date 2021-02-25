@@ -76,12 +76,11 @@ const getIdentifiers = (libraryLookupID, libraryName) => {
     var styleValue
     var currentScore = 0
     var newToken = {}
-    let notFound = ''
     for(var styleName in lookupAgainst) {
       styleValue = lookupAgainst[styleName]
       const getScore = matchScore(token.context.toString(), styleValue.name)
 
-      if (getScore > currentScore) {
+      if (getScore > currentScore) { // Only look for the highest scoring result
         currentScore = getScore
         newToken = styleValue
       }
@@ -105,10 +104,14 @@ const getIdentifiers = (libraryLookupID, libraryName) => {
       console.log(`   ∟ [${newToken.name}]`)
       tokenCount++
     } else {
+      // console.log(newToken)
+      // Go to Document and find the override.value that matches a class _SymbolMaster
+      // And fetch the name:
       tokenMissingCount++
     }
 
     // We need to replace 'token' with 'newToken'
+    let notFound = ''
     if (tokenCount>0) {
       if (tokenMissingCount == 1) {
         notFound = ` 🚨 ${tokenMissingCount} Token not found!`
