@@ -1,3 +1,4 @@
+import { Document } from "sketch";
 
 // export is only for jest
 // @TODO switch to use rewire to expose this
@@ -37,6 +38,17 @@ export const updateNestedContextsFromOverride = (nestedContexts, override, looku
         // 3. We do a 'Split' because we only need the token name
         if (lookup[override.value] != undefined) {
           contextName = lookup[override.value].name.split('/').slice(-1)
+        }
+
+        //
+        // Need to make this work with Text, Layers and Symbols
+        else {
+          // If symbol is not found in any Library
+          // Go look for a reference in the current document
+          let thisDocument = Document.getSelectedDocument()
+          let getSymbols = thisDocument.getSymbols()
+          let thisSymbol = getSymbols.find(el => el.symbolId == override.value)
+          contextName = thisSymbol.name.split('/').slice(-1)
         }
 
     }
