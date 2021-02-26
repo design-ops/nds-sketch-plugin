@@ -41,17 +41,17 @@ export const updateNestedContextsFromOverride = (nestedContexts, override, looku
 
         if (lookup[override.value] != undefined) {
           contextName = lookup[override.value].name.split('/').slice(-1)
-        }
+        } else {
 
-        //
-        // @@ TODO Need to make this work with Text, Layers and Symbols
-        else {
-
-          console.log('Style Not found')
+          // console.log('[Style Not found]')
 
           // If symbol is not found in any Library
           // Go look for a reference in the current document
-          contextName = getSymbolFromDocument(override.value)
+          if (override.value == '') {
+            contextName = getSymbolFromDocument(override.affectedLayer.symbolId)
+          } else {
+            contextName = getSymbolFromDocument(override.value)
+          }
         }
 
     }
