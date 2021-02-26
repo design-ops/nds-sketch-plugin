@@ -29,7 +29,7 @@ const getNestedContexts = (layer, context, lookup) => {
             let nested = getNestedContexts(sublayer, newContext, lookup)
             res = res.concat( nested )
 
-        } else if (sublayer.type == "SymbolInstance") { // If it's a Symbol
+        } else if (sublayer.type == "SymbolInstance" && sublayer.hidden == false && sublayer.locked == false) { // If it's a Symbol, igonre hidden or locked layers
 
             if (sublayer.overrides.length > 0){ // If the Symbol has Overrides
 
@@ -99,7 +99,8 @@ const getNestedContexts = (layer, context, lookup) => {
                 res.push({context: newContext, layer: sublayer})
             }
 
-        } else { // If it's a Layer or Text style
+        } else if ((sublayer.type == 'Text' || sublayer.type == 'ShapePath') && sublayer.hidden == false && sublayer.locked == false) { // If it's a Layer or Text style, igonre hidden or locked layers
+          // console.log(sublayer)
 
             // only add layers that have shared styles
             if (sublayer.sharedStyle != null) {
