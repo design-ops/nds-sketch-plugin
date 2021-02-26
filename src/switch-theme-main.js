@@ -87,30 +87,6 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
 
     }
 
-    // @@ TODO
-    // This is where the actual swapping should take place
-    // We need to swap 'token' with 'newToken'
-    //
-    //
-    //
-    //
-
-
-    // Sketch UI Message
-    //
-    let notFound = ''
-    if (tokenCount>0) {
-      if (tokenMissingCount == 1) {
-        notFound = ` 🚨 ${tokenMissingCount} Token match not found!`
-      } else if (tokenMissingCount > 1) {
-        notFound = ` 🚨 ${tokenMissingCount} Token matches not found!`
-      }
-      UI.message(`✅ Succesfully swapped ${tokenCount} Tokens to "${libraryName}"!${notFound}`)
-    } else {
-      UI.message(`😱 No Tokens found in "${libraryName}"!`)
-    }
-
-    // Below is for debugging and viewing the results
     //
     // Token we want to replace
     if (token.layer.type == "Override") {
@@ -118,7 +94,6 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
     } else {
        console.log(`  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
     }
-
     // Token we found that matches
     if (newToken.name != undefined) {
       console.log(`   ∟ [${newToken.name}]`) // newToken [object Object]
@@ -128,5 +103,33 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
       tokenMissingCount++
     }
 
+    // @@ TODO
+    // This is where the actual swapping should take place
+    // We need to swap 'token' with 'newToken'
+    //
+
+
   })
+
+  //
+  // Sketch UI Message
+  let notFound = ''
+  if (tokenCount>0) {
+    if (tokenMissingCount == 1) {
+      notFound = ` 🚨 ${tokenMissingCount} Token match not found!`
+    } else if (tokenMissingCount > 1) {
+      notFound = ` 🚨 ${tokenMissingCount} Token matches not found!`
+    }
+    UI.message(`✅ Found ${tokenCount} Tokens to swap from "${libraryName}"!${notFound}`)
+    console.log(`\n`,`✅ Found ${tokenCount} Tokens to swap from "${libraryName}"!${notFound}`)
+  } else {
+    UI.message(`😱 No Tokens found in "${libraryName}"!`)
+    console.log(`\n`,`😱 No Tokens found in "${libraryName}"!`)
+  }
+
+  // TODO:
+  // Consider adding extensive error message
+  // eg. If 'notFound', which Tokens where not found?
+
+
 }
