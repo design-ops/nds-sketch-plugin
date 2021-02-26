@@ -1,4 +1,4 @@
-import { Library } from "sketch";
+import { Library, Document } from "sketch";
 
 export const getAllLibraries = () => {
     //  array that will be populated with available libaries to import
@@ -23,6 +23,14 @@ export const getLibraryByName = (name) => {
         }
     })
     return selectedLibrary
+}
+
+export const getSymbolFromDocument = (id) => {
+  let thisDocument = Document.getSelectedDocument()
+  let getSymbols = thisDocument.getSymbols()
+  let thisSymbol = getSymbols.find(el => el.symbolId == id)
+  let thisToken = thisSymbol.name.split('/').slice(-1)
+  return thisToken
 }
 
 // an method that gets all the references (symbols, text styles, layer styles)

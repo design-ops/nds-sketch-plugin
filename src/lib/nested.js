@@ -1,4 +1,4 @@
-import { Document } from "sketch";
+import { getSymbolFromDocument } from './library'
 
 // export is only for jest
 // @TODO switch to use rewire to expose this
@@ -36,19 +36,22 @@ export const updateNestedContextsFromOverride = (nestedContexts, override, looku
         // 1. We lookup the current value of the Override
         // 2. If there is a value, we need to find it's name
         // 3. We do a 'Split' because we only need the token name
+
+        // console.log(lookup[override.value])
+
         if (lookup[override.value] != undefined) {
           contextName = lookup[override.value].name.split('/').slice(-1)
         }
 
         //
-        // Need to make this work with Text, Layers and Symbols
+        // @@ TODO Need to make this work with Text, Layers and Symbols
         else {
+
+          console.log('Style Not found')
+
           // If symbol is not found in any Library
           // Go look for a reference in the current document
-          let thisDocument = Document.getSelectedDocument()
-          let getSymbols = thisDocument.getSymbols()
-          let thisSymbol = getSymbols.find(el => el.symbolId == override.value)
-          contextName = thisSymbol.name.split('/').slice(-1)
+          contextName = getSymbolFromDocument(override.value)
         }
 
     }

@@ -57,12 +57,12 @@ const showSelectLibrary = () => {
 
 }
 
-const getIdentifiers = (libraryLookupID, libraryName) => {
+const getIdentifiers = (libraryLookupId, libraryName) => {
 
   const document = Document.getSelectedDocument()
   const targetLayer = getSelectedLayers(document)
   const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document) // Create Lookup for all Libraries
-  const lookupAgainst = createTextLayerSymbolLookup(Library.getLibraries().filter(library => library.id == libraryLookupID), document) // Create Lookup for the Selected Library
+  const lookupAgainst = createTextLayerSymbolLookup(Library.getLibraries().filter(library => library.id == libraryLookupId), document) // Create Lookup for the Selected Library
 
   var tokenCount = 0 // Reset Token count
   var tokenMissingCount = 0 // Reset Missing Token count
@@ -87,40 +87,45 @@ const getIdentifiers = (libraryLookupID, libraryName) => {
 
     }
 
-    //
+    // @@ TODO
     // This is where the actual swapping should take place
+    // We need to swap 'token' with 'newToken'
+    //
+    //
+    //
     //
 
 
+    // Sketch UI Message
+    //
+    let notFound = ''
+    if (tokenCount>0) {
+      if (tokenMissingCount == 1) {
+        notFound = ` 🚨 ${tokenMissingCount} Token match not found!`
+      } else if (tokenMissingCount > 1) {
+        notFound = ` 🚨 ${tokenMissingCount} Token matches not found!`
+      }
+      UI.message(`✅ Succesfully swapped ${tokenCount} Tokens to "${libraryName}"!${notFound}`)
+    } else {
+      UI.message(`😱 No Tokens found in "${libraryName}"!`)
+    }
+
+    // Below is for debugging and viewing the results
+    //
     // Token we want to replace
     if (token.layer.type == "Override") {
-       console.log(`  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`)
+       console.log(`  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
     } else {
-       console.log(`  [${token.layer.type}] [${token.context.toString()}]`)
+       console.log(`  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
     }
 
     // Token we found that matches
     if (newToken.name != undefined) {
-      console.log(`   ∟ [${newToken.name}]`)
+      console.log(`   ∟ [${newToken.name}]`) // newToken [object Object]
       tokenCount++
     } else {
-      // console.log(newToken)
-      // Go to Document and find the override.value that matches a class _SymbolMaster
-      // And fetch the name:
+      console.log(`   ∟ [Not Match Found!]`)
       tokenMissingCount++
-    }
-
-    // We need to replace 'token' with 'newToken'
-    let notFound = ''
-    if (tokenCount>0) {
-      if (tokenMissingCount == 1) {
-        notFound = ` 🚨 ${tokenMissingCount} Token not found!`
-      } else if (tokenMissingCount > 1) {
-        notFound = ` 🚨 ${tokenMissingCount} Tokens not found!`
-      }
-      UI.message(`✅ Succesfully switched ${tokenCount} Tokens to "${libraryName}"!${notFound}`)
-    } else {
-      UI.message(`✅ No Tokens found in "${libraryName}"!`)
     }
 
   })
