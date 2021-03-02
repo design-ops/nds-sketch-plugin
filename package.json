@@ -9,7 +9,7 @@
   "skpm": {
     "name": "NDS Theme Replacer",
     "manifest": "src/manifest.json",
-    "main": "com.natural-ds.plugin",
+    "main": "nds.sketchplugin",
     "assets": [
       "assets/**/*"
     ],

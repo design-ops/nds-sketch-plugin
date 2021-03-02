@@ -826,6 +826,7 @@ var getIdentifiers = function getIdentifiers(libraryLookupId, libraryName) {
   console.log("[Get Identifiers]");
   var tokens = Object(_lib_identifier__WEBPACK_IMPORTED_MODULE_2__["getIdentifiersIn"])(getArtboards, lookup);
   console.log("[Items to replace]");
+  console.log(tokens);
   var symbolTokens = tokens.filter(function (tk) {
     return tk.layer.type == "SymbolInstance" || tk.layer.type == "Override" && tk.layer.property == "symbolID";
   });

@@ -302,7 +302,7 @@ var getContextsFromOverrides = function getContextsFromOverrides(overrides, cont
     var id = override.value;
     var sharedSymbol = lookup[id];
 
-    if (override.property == "symbolID") {
+    if (override.property == "symbolID" && id != '') {
       nestedContexts = Object(_nested__WEBPACK_IMPORTED_MODULE_0__["updateNestedContextsFromOverride"])(nestedContexts, override, lookup);
 
       if (override.affectedLayer && override.affectedLayer.master) {
@@ -787,7 +787,7 @@ var showSelectLibrary = function showSelectLibrary() {
   });
   console.log("[Show Select Library Window]"); // If we use a custom UI, we can remove the trailing characters from the ID.
 
-  sketch__WEBPACK_IMPORTED_MODULE_0__["UI"].getInputFromUser("Select a Theme Library", {
+  sketch__WEBPACK_IMPORTED_MODULE_0__["UI"].getInputFromUser("NDS Theme Replacer", {
     description: "Swap out the current theme for a new one.",
     type: sketch__WEBPACK_IMPORTED_MODULE_0__["UI"].INPUT_TYPE.selection,
     possibleValues: libNames.map(function (el) {
