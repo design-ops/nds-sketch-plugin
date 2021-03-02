@@ -1,10 +1,7 @@
 import { Document, Library, UI } from "sketch";
-import { createTextLayerSymbolLookup } from "./lib/library"
+import { createTextLayerSymbolLookup, swapTokens, findTokenMatch } from "./lib/library"
 import { getIdentifiersIn } from './lib/identifier'
 import { getSelectedLayers } from './lib/layers'
-import { matchScore } from './lib/identifierMatcher'
-
-// const UIIdentifier = 'switchthemelibrary.webview'
 
 export default function onRun() {
   console.log("------------------------------")
@@ -61,6 +58,7 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
 
   const document = Document.getSelectedDocument()
   const targetLayer = getSelectedLayers(document)
+  const getArtboards = targetLayer.layers.filter(tgt => tgt.type == "Artboard")
   const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document) // Create Lookup for all Libraries
   const lookupAgainst = createTextLayerSymbolLookup(Library.getLibraries().filter(library => library.id == libraryLookupId), document) // Create Lookup for the Selected Library
 
@@ -68,24 +66,16 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
   var tokenMissingCount = 0 // Reset Missing Token count
 
   console.log("[Get Identifiers]")
-  const tokens = getIdentifiersIn(targetLayer, lookup)
+  const tokens = getIdentifiersIn(getArtboards, lookup)
 
   console.log("[Items to replace]")
-  tokens.forEach( token => {
+  let symbolTokens = tokens.filter(tk => tk.layer.type == "SymbolInstance" || (tk.layer.type == "Override" && tk.layer.property == "symbolID"))
+  let styleTokens = tokens.filter(tk => tk.layer.type == "ShapePath" || tk.layer.type == "Text" || (tk.layer.type == "Override" && tk.layer.property == "layerStyle") || (tk.layer.type == "Override" && tk.layer.property == "textStyle"))
 
-    var styleValue
-    var currentScore = 0
-    var newToken = {}
-    for(var styleName in lookupAgainst) {
-      styleValue = lookupAgainst[styleName]
-      const getScore = matchScore(token.context.toString(), styleValue.name)
+  styleTokens.forEach( token => {
 
-      if (getScore > currentScore) { // Only look for the highest scoring result
-        currentScore = getScore
-        newToken = styleValue
-      }
-
-    }
+    let newToken
+    newToken = findTokenMatch(token, lookupAgainst)
 
     //
     // Token we want to replace
@@ -97,17 +87,38 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
     // Token we found that matches
     if (newToken.name != undefined) {
       console.log(`   ∟ [${newToken.name}]`) // newToken [object Object]
+      swapTokens(token, newToken)
       tokenCount++
     } else {
       console.log(`   ∟ [Not Match Found!]`)
       tokenMissingCount++
+      console.log(`   ∟ ${token.context.toString()}`)
     }
 
-    // @@ TODO
-    // This is where the actual swapping should take place
-    // We need to swap 'token' with 'newToken'
-    //
+  })
 
+  symbolTokens.forEach( token => {
+
+    let newToken
+    newToken = findTokenMatch(token, lookupAgainst)
+
+    //
+    // Token we want to replace
+    if (token.layer.type == "Override") {
+       console.log(`  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
+    } else {
+       console.log(`  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
+    }
+    // Token we found that matches
+    if (newToken.name != undefined) {
+      console.log(`   ∟ [${newToken.name}]`) // newToken [object Object]
+      swapTokens(token, newToken)
+      tokenCount++
+    } else {
+      console.log(`   ∟ [Not Match Found!]`)
+      tokenMissingCount++
+      console.log(`   ∟ ${token.context.toString()}`)
+    }
 
   })
 

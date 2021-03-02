@@ -4,7 +4,7 @@ import { getSymbolFromDocument } from './library'
 
 export const getIdentifiersIn = (layer, lookup) => {
     let res = []
-    layer.layers.forEach( sublayer => {
+    layer.forEach( sublayer => {
         let context = getContextFromName(null, sublayer)
         let nested = getNestedContexts(sublayer, context, lookup)
         res = res.concat( nested )
@@ -38,6 +38,10 @@ const getNestedContexts = (layer, context, lookup) => {
                 // Then we need to get it's overrides
                 let symbolName = `${sublayer.name}`
                 if (symbolName.charAt(0) == "_") { // If it's a component
+
+                  // If it's a component, we need to see if we
+                  // can get a match from the components library
+                  // Probably not going to happen, ever
 
                   let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
                   res = res.concat( nested )
