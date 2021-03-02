@@ -1,14 +1,15 @@
 {
-  "name": "switchthemelibrary",
-  "decription": "Swap out NDS Themes",
-  "version": "0.1.0",
+  "name": "NDS Theme Replacer",
+  "decription": "Replace Natural Design System theme libraries",
+  "version": "0.1",
+  "author": "design-ops",
   "engines": {
     "sketch": ">=3.0"
   },
   "skpm": {
-    "name": "Switch Theme Library",
+    "name": "NDS Theme Replacer",
     "manifest": "src/manifest.json",
-    "main": "switchthemelibrary.sketchplugin",
+    "main": "com.natural-ds.plugin",
     "assets": [
       "assets/**/*"
     ],
@@ -46,6 +47,5 @@
     "plugins": [
       "@babel/plugin-proposal-class-properties"
     ]
-  },
-  "author": "atom.oil"
+  }
 }

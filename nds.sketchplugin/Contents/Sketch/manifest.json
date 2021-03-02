@@ -8,7 +8,7 @@
       "name": "NDS Theme Replacer",
       "identifier": "com.natural-ds.plugin",
       "shortcut": "ctrl command d",
-      "script": "./nds-theme-replace.js",
+      "script": "__nds-theme-replace.js",
       "handlers": {
         "run": "onRun",
         "actions": {
@@ -23,5 +23,10 @@
       "com.natural-ds.plugin"
     ]
   },
-  "icon": "icon.png"
+  "icon": "icon.png",
+  "name": "NDS Theme Replacer",
+  "identifier": "NDS Theme Replacer",
+  "disableCocoaScriptPreprocessor": true,
+  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml",
+  "author": "design-ops"
 }

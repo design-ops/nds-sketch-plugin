@@ -34,7 +34,7 @@ const showSelectLibrary = () => {
 
   // If we use a custom UI, we can remove the trailing characters from the ID.
   UI.getInputFromUser(
-    "Select a Theme Library",
+    "NDS Theme Replacer",
     {
       description: "Swap out the current theme for a new one.",
       type: UI.INPUT_TYPE.selection,
