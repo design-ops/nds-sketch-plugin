@@ -6,6 +6,10 @@ export const getIdentifiersIn = (layer, lookup) => {
     let res = []
     layer.forEach( sublayer => {
         let context = getContextFromName(null, sublayer)
+
+        // Get Artboard Section name only
+        context._arr = context._arr.map((e) => e.split(" - ")[0])
+
         let nested = getNestedContexts(sublayer, context, lookup)
         res = res.concat( nested )
     })
@@ -32,6 +36,7 @@ const getNestedContexts = (layer, context, lookup) => {
         } else if (sublayer.type == "SymbolInstance" && sublayer.hidden == false && sublayer.locked == false) { // If it's a Symbol, igonre hidden or locked layers
 
             if (sublayer.overrides.length > 0){ // If the Symbol has Overrides
+
 
 
                 // Check to see if this is a component or not.

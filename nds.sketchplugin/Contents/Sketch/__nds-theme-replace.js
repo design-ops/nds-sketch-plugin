@@ -167,7 +167,11 @@ __webpack_require__.r(__webpack_exports__);
 var getIdentifiersIn = function getIdentifiersIn(layer, lookup) {
   var res = [];
   layer.forEach(function (sublayer) {
-    var context = getContextFromName(null, sublayer);
+    var context = getContextFromName(null, sublayer); // Get Artboard Section name only
+
+    context._arr = context._arr.map(function (e) {
+      return e.split(" - ")[0];
+    });
     var nested = getNestedContexts(sublayer, context, lookup);
     res = res.concat(nested);
   });

@@ -1,6 +1,7 @@
 {
   "name": "NDS Theme Replacer",
   "decription": "Replace Natural Design System theme libraries",
+  "homepage": "https://github.com/design-ops/nds-sketch-plugin",
   "version": "0.1",
   "author": "design-ops",
   "engines": {
@@ -31,9 +32,6 @@
     "html-loader": "^0.5.5",
     "jest": "^25.2.4"
   },
-  "resources": [
-    "resources/**/*.js"
-  ],
   "dependencies": {
     "babel-jest": "^25.2.4",
     "babel-preset-env": "^1.7.0",
