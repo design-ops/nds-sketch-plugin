@@ -895,10 +895,10 @@ var getIdentifiers = function getIdentifiers(libraryLookupId, libraryName) {
     }
 
     sketch__WEBPACK_IMPORTED_MODULE_0__["UI"].message("\u2705 Found ".concat(tokenCount, " Tokens to swap from \"").concat(libraryName, "\"!").concat(notFound));
-    console.log("\n", "\u2705 Found ".concat(tokenCount, " Tokens to swap from \"").concat(libraryName, "\"!").concat(notFound));
+    console.log('\x1b[37m', "\n", "\u2705 Found ".concat(tokenCount, " Tokens to swap from \"").concat(libraryName, "\"!").concat(notFound));
   } else {
     sketch__WEBPACK_IMPORTED_MODULE_0__["UI"].message("\uD83D\uDE31 No Tokens found in \"".concat(libraryName, "\"!"));
-    console.log("\n", "\uD83D\uDE31 No Tokens found in \"".concat(libraryName, "\"!"));
+    console.log('\x1b[37m', "\n", "\uD83D\uDE31 No Tokens found in \"".concat(libraryName, "\"!"));
   } // if (tokenMissingNames.length > 0) {
   //   UI.alert('Done, but!', `I did not find these tokens: /n ${tokenMissingNames}`)
   // }

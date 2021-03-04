@@ -135,10 +135,10 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
       notFound = ` 🚨 ${tokenMissingCount} Token matches not found!`
     }
     UI.message(`✅ Found ${tokenCount} Tokens to swap from "${libraryName}"!${notFound}`)
-    console.log(`\n`,`✅ Found ${tokenCount} Tokens to swap from "${libraryName}"!${notFound}`)
+    console.log('\x1b[37m', `\n`, `✅ Found ${tokenCount} Tokens to swap from "${libraryName}"!${notFound}`)
   } else {
     UI.message(`😱 No Tokens found in "${libraryName}"!`)
-    console.log(`\n`,`😱 No Tokens found in "${libraryName}"!`)
+    console.log('\x1b[37m', `\n`, `😱 No Tokens found in "${libraryName}"!`)
   }
 
   // if (tokenMissingNames.length > 0) {
