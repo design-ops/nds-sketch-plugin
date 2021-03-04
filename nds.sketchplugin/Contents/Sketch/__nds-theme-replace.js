@@ -827,6 +827,7 @@ var getIdentifiers = function getIdentifiers(libraryLookupId, libraryName) {
 
   var tokenMissingCount = 0; // Reset Missing Token count
 
+  var tokenMissingNames = [];
   console.log("[Get Identifiers]");
   var tokens = Object(_lib_identifier__WEBPACK_IMPORTED_MODULE_2__["getIdentifiersIn"])(getArtboards, lookup);
   console.log("[Items to replace]");
@@ -842,21 +843,21 @@ var getIdentifiers = function getIdentifiers(libraryLookupId, libraryName) {
     // Token we want to replace
 
     if (token.layer.type == "Override") {
-      console.log("  [".concat(token.layer.type, ": ").concat(token.layer.affectedLayer.type, "] [").concat(token.context.toString(), "]")); // token [object Object]
+      console.log('\x1b[37m', "  [".concat(token.layer.type, ": ").concat(token.layer.affectedLayer.type, "] [").concat(token.context.toString(), "]")); // token [object Object]
     } else {
-      console.log("  [".concat(token.layer.type, "] [").concat(token.context.toString(), "]")); // token [object Object]
+      console.log('\x1b[37m', "  [".concat(token.layer.type, "] [").concat(token.context.toString(), "]")); // token [object Object]
     } // Token we found that matches
 
 
     if (newToken.name != undefined) {
-      console.log("   \u221F [".concat(newToken.name, "]")); // newToken [object Object]
+      console.log('\x1b[37m', "   \u221F [".concat(newToken.name, "]")); // newToken [object Object]
 
       Object(_lib_library__WEBPACK_IMPORTED_MODULE_1__["swapTokens"])(token, newToken);
       tokenCount++;
     } else {
-      console.log("   \u221F [Not Match Found!]");
+      console.log('\x1b[31m', "   \u221F [Not Match Found!]");
       tokenMissingCount++;
-      console.log("   \u221F ".concat(token.context.toString()));
+      tokenMissingNames.push(token.context.toString()); // console.log(`   ∟ ${token.context.toString()}`)
     }
   });
   symbolTokens.forEach(function (token) {
@@ -865,21 +866,21 @@ var getIdentifiers = function getIdentifiers(libraryLookupId, libraryName) {
     // Token we want to replace
 
     if (token.layer.type == "Override") {
-      console.log("  [".concat(token.layer.type, ": ").concat(token.layer.affectedLayer.type, "] [").concat(token.context.toString(), "]")); // token [object Object]
+      console.log('\x1b[37m', "  [".concat(token.layer.type, ": ").concat(token.layer.affectedLayer.type, "] [").concat(token.context.toString(), "]")); // token [object Object]
     } else {
-      console.log("  [".concat(token.layer.type, "] [").concat(token.context.toString(), "]")); // token [object Object]
+      console.log('\x1b[37m', "  [".concat(token.layer.type, "] [").concat(token.context.toString(), "]")); // token [object Object]
     } // Token we found that matches
 
 
     if (newToken.name != undefined) {
-      console.log("   \u221F [".concat(newToken.name, "]")); // newToken [object Object]
+      console.log('\x1b[37m', "   \u221F [".concat(newToken.name, "]")); // newToken [object Object]
 
       Object(_lib_library__WEBPACK_IMPORTED_MODULE_1__["swapTokens"])(token, newToken);
       tokenCount++;
     } else {
-      console.log("   \u221F [Not Match Found!]");
+      console.log('\x1b[31m', "   \u221F [Not Match Found!]");
       tokenMissingCount++;
-      console.log("   \u221F ".concat(token.context.toString()));
+      tokenMissingNames.push(token.context.toString()); // console.log(`   ∟ ${token.context.toString()}`)
     }
   }); //
   // Sketch UI Message
@@ -898,7 +899,10 @@ var getIdentifiers = function getIdentifiers(libraryLookupId, libraryName) {
   } else {
     sketch__WEBPACK_IMPORTED_MODULE_0__["UI"].message("\uD83D\uDE31 No Tokens found in \"".concat(libraryName, "\"!"));
     console.log("\n", "\uD83D\uDE31 No Tokens found in \"".concat(libraryName, "\"!"));
-  } // TODO:
+  } // if (tokenMissingNames.length > 0) {
+  //   UI.alert('Done, but!', `I did not find these tokens: /n ${tokenMissingNames}`)
+  // }
+  // TODO:
   // Consider adding extensive error message
   // eg. If 'notFound', which Tokens where not found?
 

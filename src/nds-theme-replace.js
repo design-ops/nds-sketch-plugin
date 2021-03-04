@@ -64,6 +64,7 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
 
   var tokenCount = 0 // Reset Token count
   var tokenMissingCount = 0 // Reset Missing Token count
+  var tokenMissingNames = []
 
   console.log("[Get Identifiers]")
   const tokens = getIdentifiersIn(getArtboards, lookup)
@@ -80,19 +81,20 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
     //
     // Token we want to replace
     if (token.layer.type == "Override") {
-       console.log(`  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
+       console.log('\x1b[37m', `  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
     } else {
-       console.log(`  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
+       console.log('\x1b[37m', `  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
     }
     // Token we found that matches
     if (newToken.name != undefined) {
-      console.log(`   ∟ [${newToken.name}]`) // newToken [object Object]
+      console.log('\x1b[37m', `   ∟ [${newToken.name}]`) // newToken [object Object]
       swapTokens(token, newToken)
       tokenCount++
     } else {
-      console.log(`   ∟ [Not Match Found!]`)
+      console.log('\x1b[31m', `   ∟ [Not Match Found!]`)
       tokenMissingCount++
-      console.log(`   ∟ ${token.context.toString()}`)
+      tokenMissingNames.push(token.context.toString())
+      // console.log(`   ∟ ${token.context.toString()}`)
     }
 
   })
@@ -105,19 +107,20 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
     //
     // Token we want to replace
     if (token.layer.type == "Override") {
-       console.log(`  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
+       console.log('\x1b[37m', `  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
     } else {
-       console.log(`  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
+       console.log('\x1b[37m', `  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
     }
     // Token we found that matches
     if (newToken.name != undefined) {
-      console.log(`   ∟ [${newToken.name}]`) // newToken [object Object]
+      console.log('\x1b[37m', `   ∟ [${newToken.name}]`) // newToken [object Object]
       swapTokens(token, newToken)
       tokenCount++
     } else {
-      console.log(`   ∟ [Not Match Found!]`)
+      console.log('\x1b[31m', `   ∟ [Not Match Found!]`)
       tokenMissingCount++
-      console.log(`   ∟ ${token.context.toString()}`)
+      tokenMissingNames.push(token.context.toString())
+      // console.log(`   ∟ ${token.context.toString()}`)
     }
 
   })
@@ -137,6 +140,11 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
     UI.message(`😱 No Tokens found in "${libraryName}"!`)
     console.log(`\n`,`😱 No Tokens found in "${libraryName}"!`)
   }
+
+  // if (tokenMissingNames.length > 0) {
+  //   UI.alert('Done, but!', `I did not find these tokens: /n ${tokenMissingNames}`)
+  // }
+
 
   // TODO:
   // Consider adding extensive error message
