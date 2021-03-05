@@ -17,6 +17,10 @@ export class VariableSizeContext {
     }
     appendLast(str) {
         const arr = this._arrayFromString(str)
-        return this.append(arr[arr.length-1])
+        if (arr.length > 0) {
+          return this.append(arr[arr.length-1])
+        } else {
+          return this
+        }
     }
 }

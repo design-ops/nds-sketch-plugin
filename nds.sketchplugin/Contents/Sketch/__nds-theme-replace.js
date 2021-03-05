@@ -139,7 +139,11 @@ var VariableSizeContext = /*#__PURE__*/function () {
     value: function appendLast(str) {
       var arr = this._arrayFromString(str);
 
-      return this.append(arr[arr.length - 1]);
+      if (arr.length > 0) {
+        return this.append(arr[arr.length - 1]);
+      } else {
+        return this;
+      }
     }
   }]);
 
