@@ -1,0 +1,48 @@
+{
+  "name": "NDS Theme Replacer",
+  "decription": "Replace Natural Design System theme libraries",
+  "homepage": "https://github.com/design-ops/nds-sketch-plugin",
+  "version": "0.1",
+  "author": "design-ops",
+  "engines": {
+    "sketch": ">=3.0"
+  },
+  "skpm": {
+    "name": "NDS Theme Replacer",
+    "manifest": "src/manifest.json",
+    "main": "nds.sketchplugin",
+    "assets": [
+      "assets/**/*"
+    ],
+    "sketch-assets-file": "sketch-assets/icons.sketch"
+  },
+  "scripts": {
+    "build": "skpm-build",
+    "watch": "skpm-build --watch",
+    "start": "skpm-build --watch",
+    "postinstall": "npm run build && skpm-link",
+    "log": "skpm log -f",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@skpm/builder": "^0.7.4",
+    "@skpm/extract-loader": "^2.0.2",
+    "babel-jest": "^25.2.4",
+    "css-loader": "^3.2.0",
+    "html-loader": "^0.5.5",
+    "jest": "^25.2.4"
+  },
+  "dependencies": {
+    "babel-preset-env": "^1.7.0",
+    "skpm": "^1.3.2"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties"
+    ]
+  }
+}
