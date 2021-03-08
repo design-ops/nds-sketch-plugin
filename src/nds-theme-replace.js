@@ -20,7 +20,7 @@ export default function onRun() {
 
 const showSelectLibrary = () => {
 
-  console.log("[Get Enabled Libraries]")
+  console.log("[Get Libraries]")
   let libs = Library.getLibraries()
   let libNames = []
 
@@ -141,9 +141,9 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
     console.log('\x1b[37m', `\n`, `😱 No Tokens found in "${libraryName}"!`)
   }
 
-  // if (tokenMissingNames.length > 0) {
-  //   UI.alert('Done, but!', `I did not find these tokens: /n ${tokenMissingNames}`)
-  // }
+  if (tokenMissingNames.length > 0) {
+    UI.alert('Done, but!', `I did not find these tokens: /n ${tokenMissingNames}`)
+  }
 
 
   // TODO:

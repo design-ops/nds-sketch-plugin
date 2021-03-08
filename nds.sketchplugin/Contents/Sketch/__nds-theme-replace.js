@@ -171,7 +171,8 @@ __webpack_require__.r(__webpack_exports__);
 var getIdentifiersIn = function getIdentifiersIn(layer, lookup) {
   var res = [];
   layer.forEach(function (sublayer) {
-    var context = getContextFromName(null, sublayer); // Get Artboard Section name only
+    var context = getContextFromName(null, sublayer);
+    console.log(" \u221F [Scanning:  ".concat(context, "]")); // Get Artboard Section name only
 
     context._arr = context._arr.map(function (e) {
       return e.split(" - ")[0];
@@ -780,7 +781,7 @@ function onRun() {
 }
 
 var showSelectLibrary = function showSelectLibrary() {
-  console.log("[Get Enabled Libraries]");
+  console.log("[Get Libraries]");
   var libs = sketch__WEBPACK_IMPORTED_MODULE_0__["Library"].getLibraries();
   var libNames = [];
   libs.forEach(function (lib) {
@@ -903,10 +904,11 @@ var getIdentifiers = function getIdentifiers(libraryLookupId, libraryName) {
   } else {
     sketch__WEBPACK_IMPORTED_MODULE_0__["UI"].message("\uD83D\uDE31 No Tokens found in \"".concat(libraryName, "\"!"));
     console.log('\x1b[37m', "\n", "\uD83D\uDE31 No Tokens found in \"".concat(libraryName, "\"!"));
-  } // if (tokenMissingNames.length > 0) {
-  //   UI.alert('Done, but!', `I did not find these tokens: /n ${tokenMissingNames}`)
-  // }
-  // TODO:
+  }
+
+  if (tokenMissingNames.length > 0) {
+    sketch__WEBPACK_IMPORTED_MODULE_0__["UI"].alert('Done, but!', "I did not find these tokens: /n ".concat(tokenMissingNames));
+  } // TODO:
   // Consider adding extensive error message
   // eg. If 'notFound', which Tokens where not found?
 
