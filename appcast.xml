@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+  <title>NDS Sketch Plugin</title>
+  <link>https://github.com/design-ops/nds-sketch-plugin</link>
+  <description>Swap out the current NDS theme for a new one.</description>
+  <language>en</language>
+  <item>
+    <title>Version 1.0.0</title>
+    <enclosure url="https://github.com/design-ops/nds-sketch-plugin/releases/download/v1.0.0/nds.sketchplugin-v1.0.0.zip" sparkle:version="1.0.0"/>
+  </item>
+</channel>
+</rss>
