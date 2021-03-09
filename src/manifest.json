@@ -2,7 +2,7 @@
   "compatibleVersion": 70,
   "bundleVersion": 1,
   "homepage": "https://github.com/design-ops/nds-sketch-plugin",
-  "version": "0.1",
+  "version": "1.0.0",
   "appcast": "https://raw.githubusercontent.com/design-ops/nds-sketch-plugin/master/appcast.xml",
   "commands": [
     {
