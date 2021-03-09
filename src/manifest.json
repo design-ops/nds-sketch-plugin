@@ -3,6 +3,7 @@
   "bundleVersion": 1,
   "homepage": "https://github.com/design-ops/nds-sketch-plugin",
   "version": "0.1",
+  "appcast": "https://raw.githubusercontent.com/design-ops/nds-sketch-plugin/master/appcast.xml",
   "commands": [
     {
       "name": "NDS Theme Replacer",
