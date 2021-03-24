@@ -2,6 +2,7 @@ import { Document, Library, UI } from "sketch";
 import { createTextLayerSymbolLookup, swapTokens, findTokenMatch } from "./lib/library"
 import { getIdentifiersIn } from './lib/identifier'
 import { getSelectedLayers } from './lib/layers'
+import { showNativeUI } from './lib/ui-native'
 
 export default function onRun() {
   console.log("------------------------------")
@@ -32,6 +33,14 @@ const showSelectLibrary = () => {
 
   console.log("[Show Select Library Window]")
 
+  // display a native UI here...
+  const ui = showNativeUI(libNames)
+  ui.onLibrarySelected = (library) => {
+    console.log("librarySelected!", library)
+    getIdentifiers(library.id, library.name)
+  }
+
+  /*
   // If we use a custom UI, we can remove the trailing characters from the ID.
   UI.getInputFromUser(
     "NDS Theme Replacer",
@@ -51,6 +60,8 @@ const showSelectLibrary = () => {
       }
     }
   )
+    */
+  
 
 }
 
