@@ -8,7 +8,7 @@ export default function styles() {
 		panelGutter: 15,
 
 		// List
-		itemHeight: 72,
+		itemHeight: 50,
 		itemWidth: 338,
 		leftColWidth: 60,
 		rightColPad: 8,

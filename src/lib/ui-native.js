@@ -45,14 +45,14 @@ const mainView = (panelStyles, theme, libraries) => {
 
   let libraryScroll = createScrollView(theme,NSMakeRect(20,90,338,239))
   let libraryContent = createView(NSMakeRect(0,0,panelStyles.itemWidth,panelStyles.itemHeight * libraries.length))
-  
+
 
   libraries.forEach((lib, i) => {
     let listItem = createView(NSMakeRect(0,panelStyles.itemHeight*i,panelStyles.itemWidth,panelStyles.itemHeight))
 
-    let title = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, lib.name, NSMakeRect(20, 55, 200, 18))
+    let title = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.titleFont, lib.name, NSMakeRect(20, 20, 200, 18))
 
-    let button = NSButton.alloc().initWithFrame(NSMakeRect(237,18,88,36)) 
+    let button = NSButton.alloc().initWithFrame(NSMakeRect(237,10,80,36))
     button.setTitle('Swap')
     button.setBezelStyle(NSRoundedBezelStyle)
     button.setAction('callAction:')
