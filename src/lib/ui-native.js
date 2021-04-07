@@ -1,8 +1,9 @@
 import sketch from 'sketch'
+import settings from 'sketch/settings'
 import createFloatingPanel from '../ui/create-floating-panel'
 import createText from '../ui/create-text'
 import createScrollView from '../ui/create-scroll-view'
-
+import createRadioButtons from '../ui/create-radio-buttons'
 
 import styles from '../ui/styles'
 
@@ -12,7 +13,7 @@ const pluginName = __command.pluginBundle().name()
 const theme = sketch.UI.getTheme()
 
 let events = {
-  onLibrarySelected: (library) => {
+  onLibrarySelected: (library, applyToSelection) => {
     console.log("default onLibrarySelected - override this!")
   }
 }
@@ -38,7 +39,12 @@ export const showNativeUI = (libraries) => {
 const mainView = (panelStyles, theme, libraries) => {
 
   //Settings
-  //let lastSelected = settings.sessionVariable('Selected')
+  let lastSelected = settings.sessionVariable('Selected')
+
+  let swapType = createRadioButtons(
+    ['Apply to selection', 'Apply to document'],
+    lastSelected
+  )
 
   let panelContent = createView(NSMakeRect(0, 0, panelStyles.panelWidth, panelStyles.panelHeight - panelStyles.panelHeader))
   let themesTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Select Library (${libraries.length})`, NSMakeRect(20, 55, 200, 18))
@@ -58,9 +64,9 @@ const mainView = (panelStyles, theme, libraries) => {
     button.setAction('callAction:')
 
     button.setCOSJSTargetFunction(function() {
-      events.onLibrarySelected(lib)
+      let applyToSelection = (swapType.selectedCell().tag() === 0)
+      events.onLibrarySelected(lib, applyToSelection)
     })
-
 
     const wut = [title, button].forEach(i => listItem.addSubview(i))
 
@@ -68,8 +74,8 @@ const mainView = (panelStyles, theme, libraries) => {
   })
 
   libraryScroll.setDocumentView(libraryContent)
-  panelContent.addSubview(libraryScroll)
-  panelContent.addSubview(themesTitle)
+
+  const ignore = [ libraryScroll, themesTitle, swapType ].forEach(i => panelContent.addSubview(i))
 
   /*
   let swapType = createRadioButtons(

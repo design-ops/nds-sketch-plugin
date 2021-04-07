@@ -35,8 +35,8 @@ const showSelectLibrary = () => {
 
   // display a native UI here...
   const ui = showNativeUI(libNames)
-  ui.onLibrarySelected = (library) => {
-    console.log("librarySelected!", library)
+  ui.onLibrarySelected = (library, applyToSelection) => {
+    console.log("librarySelected!", library, applyToSelection)
     getIdentifiers(library.id, library.name)
   }
 
