@@ -37,7 +37,7 @@ const showSelectLibrary = () => {
   const ui = showNativeUI(libNames)
   ui.onLibrarySelected = (library, applyToSelection) => {
     console.log("librarySelected!", library, applyToSelection)
-    getIdentifiers(library.id, library.name, ui.onProgressUpdate)
+    getIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate)
   }
 
   /*
@@ -81,13 +81,20 @@ const updateProgress = () => {
   if (tokens.length > 0) progressMethod( (tokenCount + tokenMissingCount) / tokens.length )
 }
 
-const getIdentifiers = (libraryLookupId, libraryName, progress) => {
+const getIdentifiers = (applyToSelection, libraryLookupId, libraryName, progress) => {
 
   progressMethod = progress
 
   const document = Document.getSelectedDocument()
-  const targetLayer = getSelectedLayers(document)
-  const getArtboards = targetLayer.layers.filter(tgt => tgt.type == "Artboard")
+  if (applyToSelection === true) {
+    const targetLayer = getSelectedLayers(document)
+    const getArtboards = targetLayer.layers.filter(tgt => tgt.type == "Artboard")
+  } else {
+    // whole document...
+    document.pages
+
+    return;
+  }
   const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document) // Create Lookup for all Libraries
   lookupAgainst = createTextLayerSymbolLookup(Library.getLibraries().filter(library => library.id == libraryLookupId), document) // Create Lookup for the Selected Library
 
