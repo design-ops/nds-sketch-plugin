@@ -8,6 +8,7 @@ import createRadioButtons from '../ui/create-radio-buttons'
 import styles from '../ui/styles'
 
 import createView from '../ui/create-view'
+import createProgressBar from '../ui/create-progressview'
 const pluginName = __command.pluginBundle().name()
 
 const theme = sketch.UI.getTheme()
@@ -182,14 +183,15 @@ const createProgressView = (panelStyles, theme) => {
   let themesTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Progress Goes Here`, NSMakeRect(20, 55, 200, 18))
 
   let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `0%`, NSMakeRect(20, 155, 200, 18))
-
+  let progressBar = createProgressBar(NSMakeRect(20, 175, 200, 18))
 
   themesTitle.setStringValue("Where is the progress?")
 
-  const ignore = [ themesTitle, progressTitle ].forEach(i => panelContent.addSubview(i))
+  const ignore = [ themesTitle, progressTitle, progressBar ].forEach(i => panelContent.addSubview(i))
 
   const updateProgress = (perc) => {
     progressTitle.setStringValue(Math.round(perc*100) + "%")
+    progressBar.setDoubleValue(perc*100.0)
   }
 
   return { view: panelContent, updateProgress: updateProgress }
