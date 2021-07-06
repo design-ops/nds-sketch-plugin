@@ -1,7 +1,7 @@
 import { Document, Library, UI } from "sketch";
 import { createTextLayerSymbolLookup, swapTokens, findTokenMatch } from "./lib/library"
 import { getIdentifiersIn } from './lib/identifier'
-import { getSelectedLayers } from './lib/layers'
+import { getSelectedLayers, getLayersFromAllPages } from './lib/layers'
 import { showNativeUI } from './lib/ui-native'
 
 export default function onRun() {
@@ -86,14 +86,17 @@ const getIdentifiers = (applyToSelection, libraryLookupId, libraryName, progress
   progressMethod = progress
 
   const document = Document.getSelectedDocument()
+  let getArtboards;
   if (applyToSelection === true) {
+
     const targetLayer = getSelectedLayers(document)
-    const getArtboards = targetLayer.layers.filter(tgt => tgt.type == "Artboard")
+    getArtboards = targetLayer.layers.filter(tgt => tgt.type == "Artboard")
   } else {
     // whole document...
-    document.pages
-
-    return;
+    // loop through pages, and then loop through their layers and filter to just Artboards...
+    const allLayers = getLayersFromAllPages(document)
+    getArtboards = allLayers.filter(tgt => tgt.type == "Artboard")
+    console.log("getArtBoards baby:", getArtboards);
   }
   const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document) // Create Lookup for all Libraries
   lookupAgainst = createTextLayerSymbolLookup(Library.getLibraries().filter(library => library.id == libraryLookupId), document) // Create Lookup for the Selected Library
