@@ -8,12 +8,10 @@ export default function createProgressBar(frame) {
 	//progress.setIsIndeterminate(false)
 	progress.isIndeterminate = false
 	progress.startAnimation(true)
-	// progress.setMinValue(0)
-	// progress.setMaxValue(100)
+	// progress.usesThreadedAnimation = false
 	progress.setDoubleValue(0.0)
-	//progress.setValue(50.0)
 
-	console.log("doubleValue:", progress.doubleValue(), progress.minValue(), progress.maxValue());
+	// console.log("doubleValue:", progress.doubleValue(), progress.minValue(), progress.maxValue());
 
 	return progress
 }

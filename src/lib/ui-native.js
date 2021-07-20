@@ -18,7 +18,7 @@ let events = {
     console.log("default onLibrarySelected - override this!")
   },
   onProgressUpdate: (perc) => {
-    
+
   }
 }
 
@@ -30,7 +30,7 @@ export const showNativeUI = (libraries) => {
   let panelStyles = styles()
   selectLibraryView = createSelectLibraryView(panelStyles, theme, libraries)
   let data = createProgressView(panelStyles, theme)
-  
+
   progressView = data.view
   progressUpdate = data.updateProgress
 
@@ -55,7 +55,7 @@ const libraryWasSelected = (lib, applyToSelection) => {
 
   selectLibraryView.setHidden(true)
   progressView.setHidden(false)
-  
+
   events.onProgressUpdate = (perc) => {
     console.log("progress is " + (perc * 100) + "%")
     progressUpdate(perc)
@@ -65,7 +65,7 @@ const libraryWasSelected = (lib, applyToSelection) => {
   setTimeout( () => {
     events.onLibrarySelected(lib, applyToSelection)
   }, 100)
-  
+
 }
 
 const createSelectLibraryView = (panelStyles, theme, libraries) => {
@@ -183,9 +183,9 @@ const createProgressView = (panelStyles, theme) => {
   let themesTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Progress Goes Here`, NSMakeRect(20, 55, 200, 18))
 
   let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `0%`, NSMakeRect(20, 155, 200, 18))
-  let progressBar = createProgressBar(NSMakeRect(20, 175, 200, 18))
+  let progressBar = createProgressBar(NSMakeRect(20, 175, 340, 18))
 
-  themesTitle.setStringValue("Where is the progress?")
+  themesTitle.setStringValue("Applying theme...")
 
   const ignore = [ themesTitle, progressTitle, progressBar ].forEach(i => panelContent.addSubview(i))
 
@@ -196,7 +196,11 @@ const createProgressView = (panelStyles, theme) => {
     progressBar.indeterminate = false
     progressBar.setDoubleValue(perc*100.0)
     // progressBar.incrementBy(5.0);
-    console.log("progress percentage is ", progressBar.doubleValue())
+    // console.log("progress percentage is ", progressBar.doubleValue())
+    if (perc == 1) {
+      themesTitle.setStringValue("Done")
+    }
+
   }
 
   return { view: panelContent, updateProgress: updateProgress }
