@@ -191,7 +191,12 @@ const createProgressView = (panelStyles, theme) => {
 
   const updateProgress = (perc) => {
     progressTitle.setStringValue(Math.round(perc*100) + "%")
+    // progressBar.setDoubleValue(20.0)
+    // progressBar.isIndeterminate = false
+    progressBar.indeterminate = false
     progressBar.setDoubleValue(perc*100.0)
+    // progressBar.incrementBy(5.0);
+    console.log("progress percentage is ", progressBar.doubleValue())
   }
 
   return { view: panelContent, updateProgress: updateProgress }
