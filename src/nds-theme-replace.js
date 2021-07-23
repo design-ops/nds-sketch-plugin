@@ -37,31 +37,8 @@ const showSelectLibrary = () => {
   const ui = showNativeUI(libNames)
   ui.onLibrarySelected = (library, applyToSelection) => {
     console.log("librarySelected!", library, applyToSelection)
-    getIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate)
+    processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate)
   }
-
-  /*
-  // If we use a custom UI, we can remove the trailing characters from the ID.
-  UI.getInputFromUser(
-    "NDS Theme Replacer",
-    {
-      description: "Swap out the current theme for a new one.",
-      type: UI.INPUT_TYPE.selection,
-      possibleValues: libNames.map(el => el.name + " (" + el.id.slice(-6) + ")"),
-    },
-    (err, value) => {
-      if (err) {
-        console.log("[Canceled]")
-        return
-      } else {
-        const found = libNames.find(el => el.name + " (" + el.id.slice(-6) + ")" == value)
-        console.log(`[Selected Library] - "${found.name} (${found.id.slice(-6)})"`)
-        getIdentifiers(found.id, found.name)
-      }
-    }
-  )
-    */
-
 
 }
 
@@ -81,7 +58,15 @@ const updateProgress = () => {
   if (tokens.length > 0) progressMethod( (tokenCount + tokenMissingCount) / tokens.length )
 }
 
-const getIdentifiers = (applyToSelection, libraryLookupId, libraryName, progress) => {
+const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, progress) => {
+
+  tokenCount = 0 // Reset Token count
+  tokenMissingCount = 0 // Reset Missing Token count
+  tokenMissingNames = []
+  lookupAgainst = null
+  tokens = []
+  symbolTokens = []
+  styleTokens = []
 
   progressMethod = progress
 

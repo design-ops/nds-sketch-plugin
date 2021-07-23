@@ -19,6 +19,9 @@ let events = {
   },
   onProgressUpdate: (perc) => {
 
+  },
+  resetProgress: () => {
+
   }
 }
 
@@ -33,6 +36,7 @@ export const showNativeUI = (libraries) => {
 
   progressView = data.view
   progressUpdate = data.updateProgress
+  events.resetProgress = data.resetProgress
 
   progressView.setHidden(true)
 
@@ -68,6 +72,12 @@ const libraryWasSelected = (lib, applyToSelection) => {
 
 }
 
+const processingHasFinished = () => {
+  selectLibraryView.setHidden(false)
+  progressView.setHidden(true)
+  events.resetProgress();
+}
+
 const createSelectLibraryView = (panelStyles, theme, libraries) => {
 
   //Settings
@@ -77,9 +87,11 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
     ['Apply to selection', 'Apply to document (Beta)'],
     lastSelected
   )
+  let swapTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Select Option`, NSMakeRect(20, 358, 200, 18))
+
 
   let panelContent = createView(NSMakeRect(0, 0, panelStyles.panelWidth, panelStyles.panelHeight - panelStyles.panelHeader))
-  let themesTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Select Library (${libraries.length})`, NSMakeRect(20, 55, 200, 18))
+  let libraryTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Select Library`, NSMakeRect(20, 55, 200, 18))
 
   let libraryScroll = createScrollView(theme,NSMakeRect(20,90,338,239))
   let libraryContent = createView(NSMakeRect(0,0,panelStyles.itemWidth,panelStyles.itemHeight * libraries.length))
@@ -107,36 +119,51 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
 
   libraryScroll.setDocumentView(libraryContent)
 
-  const ignore = [ libraryScroll, themesTitle, swapType ].forEach(i => panelContent.addSubview(i))
+  const ignore = [ libraryScroll, libraryTitle, swapTitle, swapType ].forEach(i => panelContent.addSubview(i))
 
   return panelContent
 }
 
 const createProgressView = (panelStyles, theme) => {
   let panelContent = createView(NSMakeRect(0, 0, panelStyles.panelWidth, panelStyles.panelHeight - panelStyles.panelHeader))
-  let themesTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Progress Goes Here`, NSMakeRect(20, 55, 200, 18))
+  let themesTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `..`, NSMakeRect(20, 55, 200, 18))
 
-  let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Analysing document`, NSMakeRect(20, 155, 200, 18))
+  let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `..`, NSMakeRect(20, 155, 200, 18))
   let progressBar = createProgressBar(NSMakeRect(20, 175, 340, 18))
+  
+  let completeButton = NSButton.alloc().initWithFrame(NSMakeRect(panelStyles.panelWidth-80-12,200,80,36))
+  completeButton.setTitle('Done')
+  completeButton.setBezelStyle(NSRoundedBezelStyle)
+  completeButton.setAction('callAction:')
+  completeButton.enabled = false
 
-  themesTitle.setStringValue("Applying theme...")
+  completeButton.setCOSJSTargetFunction(function() {
+    processingHasFinished();
+  })
 
-  const ignore = [ themesTitle, progressTitle, progressBar ].forEach(i => panelContent.addSubview(i))
+  const ignore = [ themesTitle, progressTitle, progressBar, completeButton ].forEach(i => panelContent.addSubview(i))
 
   const updateProgress = (perc) => {
+
     progressTitle.setStringValue("Swapping: " + Math.round(perc*100) + "%")
-    // progressBar.setDoubleValue(20.0)
-    // progressBar.isIndeterminate = false
     progressBar.indeterminate = false
     progressBar.setDoubleValue(perc*100.0)
-    // progressBar.incrementBy(5.0);
-    // console.log("progress percentage is ", progressBar.doubleValue())
-    if (perc == 1) {
+    
+    if (perc >= 1) {
       themesTitle.setStringValue("Done")
-        progressTitle.setStringValue("100%")
+      progressTitle.setStringValue("100%")
+      completeButton.enabled = true
     }
-
   }
 
-  return { view: panelContent, updateProgress: updateProgress }
+  const resetProgress = () => {
+    progressBar.indeterminate = true
+    completeButton.enabled = false
+    themesTitle.setStringValue("Applying theme...")
+    progressTitle.setStringValue("Analysing document")
+  }
+
+  resetProgress();
+
+  return { view: panelContent, updateProgress: updateProgress, resetProgress: resetProgress }
 }
