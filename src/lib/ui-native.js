@@ -147,7 +147,7 @@ const createProgressView = (panelStyles, theme) => {
 
     progressTitle.setStringValue("Swapping: " + Math.round(perc*100) + "%")
     progressBar.indeterminate = false
-    progressBar.stopAnimation();
+    progressBar.stopAnimation(null);
     progressBar.setDoubleValue(perc*100.0)
     
     if (perc >= 1) {
@@ -159,7 +159,7 @@ const createProgressView = (panelStyles, theme) => {
 
   const resetProgress = () => {
     progressBar.indeterminate = true
-    progressBar.startAnimation();
+    progressBar.startAnimation(null);
     completeButton.enabled = false
     themesTitle.setStringValue("Applying theme...")
     progressTitle.setStringValue("Analysing document")
