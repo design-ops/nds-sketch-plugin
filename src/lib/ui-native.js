@@ -74,7 +74,7 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
   let lastSelected = settings.sessionVariable('Selected')
 
   let swapType = createRadioButtons(
-    ['Apply to selection', 'Apply to document'],
+    ['Apply to selection', 'Apply to document (Beta)'],
     lastSelected
   )
 
@@ -98,8 +98,6 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
     button.setCOSJSTargetFunction(function() {
       let applyToSelection = (swapType.selectedCell().tag() === 0)
       libraryWasSelected(lib, applyToSelection)
-
-
     })
 
     const wut = [title, button].forEach(i => listItem.addSubview(i))
