@@ -182,7 +182,7 @@ const createProgressView = (panelStyles, theme) => {
   let panelContent = createView(NSMakeRect(0, 0, panelStyles.panelWidth, panelStyles.panelHeight - panelStyles.panelHeader))
   let themesTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Progress Goes Here`, NSMakeRect(20, 55, 200, 18))
 
-  let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `0%`, NSMakeRect(20, 155, 200, 18))
+  let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Analysing document`, NSMakeRect(20, 155, 200, 18))
   let progressBar = createProgressBar(NSMakeRect(20, 175, 340, 18))
 
   themesTitle.setStringValue("Applying theme...")
@@ -190,7 +190,7 @@ const createProgressView = (panelStyles, theme) => {
   const ignore = [ themesTitle, progressTitle, progressBar ].forEach(i => panelContent.addSubview(i))
 
   const updateProgress = (perc) => {
-    progressTitle.setStringValue(Math.round(perc*100) + "%")
+    progressTitle.setStringValue("Swapping: " + Math.round(perc*100) + "%")
     // progressBar.setDoubleValue(20.0)
     // progressBar.isIndeterminate = false
     progressBar.indeterminate = false
@@ -199,6 +199,7 @@ const createProgressView = (panelStyles, theme) => {
     // console.log("progress percentage is ", progressBar.doubleValue())
     if (perc == 1) {
       themesTitle.setStringValue("Done")
+        progressTitle.setStringValue("100%")
     }
 
   }
