@@ -128,12 +128,12 @@ const createProgressView = (panelStyles, theme) => {
   let panelContent = createView(NSMakeRect(0, 0, panelStyles.panelWidth, panelStyles.panelHeight - panelStyles.panelHeader))
   let themesTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `..`, NSMakeRect(20, 55, 200, 18))
 
-  let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `..`, NSMakeRect(20, 155, 200, 18))
-  let progressBar = createProgressBar(NSMakeRect(20, 175, 340, 18))
-  
-  let completeButton = NSButton.alloc().initWithFrame(NSMakeRect(panelStyles.panelWidth-80-12,200,80,36))
+  let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.progressFont, `..`, NSMakeRect(20, 428, 200, 18))
+  let progressBar = createProgressBar(NSMakeRect(20, 400, panelStyles.panelWidth-40, 18))
+
+  let completeButton = NSButton.alloc().initWithFrame(NSMakeRect(panelStyles.panelWidth-80-12,420,80,36))
   completeButton.setTitle('Done')
-  completeButton.setBezelStyle(NSRoundedBezelStyle)
+  completeButton.setBezelStyle(NSBezelStyleRounded)
   completeButton.setAction('callAction:')
   completeButton.enabled = false
 
@@ -144,25 +144,19 @@ const createProgressView = (panelStyles, theme) => {
   const ignore = [ themesTitle, progressTitle, progressBar, completeButton ].forEach(i => panelContent.addSubview(i))
 
   const updateProgress = (perc) => {
-
     progressTitle.setStringValue("Swapping: " + Math.round(perc*100) + "%")
     progressBar.indeterminate = false
-    progressBar.stopAnimation(null);
     progressBar.setDoubleValue(perc*100.0)
-    
     if (perc >= 1) {
-      themesTitle.setStringValue("Done")
-      progressTitle.setStringValue("100%")
+      progressTitle.setStringValue("Operation Complete")
       completeButton.enabled = true
     }
   }
 
   const resetProgress = () => {
-    progressBar.indeterminate = true
-    progressBar.startAnimation(null);
     completeButton.enabled = false
-    themesTitle.setStringValue("Applying theme...")
-    progressTitle.setStringValue("Analysing document")
+    themesTitle.setHidden(true)
+    progressTitle.setStringValue("Analysing Document...")
   }
 
   resetProgress();

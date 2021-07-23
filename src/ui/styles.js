@@ -17,6 +17,7 @@ export default function styles() {
 
 		// Fonts
 		sectionFont: NSFont.boldSystemFontOfSize(15),
+		progressFont: NSFont.systemFontOfSize(12),
 		titleFont: NSFont.boldSystemFontOfSize(12),
 		subtitleFont: NSFont.systemFontOfSize(10),
 
