@@ -152,6 +152,14 @@ const createProgressView = (panelStyles, theme) => {
 
   const updateTextStatus = (string) => {
     textView.string = textView.string() + string + "\n"
+    // now scroll to the bottom of the text! (hopefully)
+    const textHeight = textView.bounds().size.height;
+    const scrollSize = textScroll.bounds().size
+    const y = textHeight - scrollSize.height
+    //const desiredScrollRect = NSMakeRect( 0, y, scrollSize.width, scrollSize.height )
+    //textScroll.documentVisibleRect = desiredScrollRect
+    // console.log(textScroll.documentVisibleRect(), desiredScrollRect)
+    textScroll.contentView.scrollToPoint( CGPointMake(0,y))
   }
 
   const updateProgress = (perc) => {
