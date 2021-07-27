@@ -144,7 +144,7 @@ const createProgressView = (panelStyles, theme) => {
   })
 
   let textView = createTextView(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.logFont, ``, NSMakeRect(0, 0, panelStyles.panelWidth-50, 200))
-  let textScroll = createScrollView(theme,NSMakeRect(20,90,panelStyles.panelWidth-40,239))
+  let textScroll = createScrollView(theme,NSMakeRect(20,55,panelStyles.panelWidth-40,330))
   textScroll.addSubview(textView)
   textScroll.setDocumentView(textView)
 
@@ -173,9 +173,9 @@ const createProgressView = (panelStyles, theme) => {
 
   resetProgress();
 
-  return { view: panelContent, 
-            updateProgress: updateProgress, 
-            resetProgress: resetProgress, 
-            updateTextStatus: updateTextStatus 
+  return { view: panelContent,
+            updateProgress: updateProgress,
+            resetProgress: resetProgress,
+            updateTextStatus: updateTextStatus
           }
 }
