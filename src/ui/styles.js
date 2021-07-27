@@ -20,6 +20,7 @@ export default function styles() {
 		progressFont: NSFont.systemFontOfSize(12),
 		titleFont: NSFont.boldSystemFontOfSize(12),
 		subtitleFont: NSFont.systemFontOfSize(10),
+		logFont: NSFont.systemFontOfSize(10),
 
 		//Colors
 		darkTextGrey: NSColor.colorWithCalibratedRed_green_blue_alpha(0,0,0,0.4),

@@ -37,7 +37,7 @@ const showSelectLibrary = () => {
   const ui = showNativeUI(libNames)
   ui.onLibrarySelected = (library, applyToSelection) => {
     console.log("librarySelected!", library, applyToSelection)
-    processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate)
+    processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
   }
 
 }
@@ -58,7 +58,7 @@ const updateProgress = () => {
   if (tokens.length > 0) progressMethod( (tokenCount + tokenMissingCount) / tokens.length )
 }
 
-const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, progress) => {
+const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, progress, updateTextStatus) => {
 
   tokenCount = 0 // Reset Token count
   tokenMissingCount = 0 // Reset Missing Token count
@@ -97,7 +97,7 @@ const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, prog
   // symbolTokens.forEach( token => processSymbolToken(token) )
 
   const interval = setInterval(() => {
-    if (!updateNext()) {
+    if (!updateNext(updateTextStatus)) {
       finishedProcessing(libraryName)
       console.log("finished updating!")
       clearInterval( interval )
@@ -106,14 +106,14 @@ const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, prog
 
 }
 
-const updateNext = () => {
+const updateNext = (updateTextStatus) => {
   if (styleTokens.length > 0) {
     const token = styleTokens.pop()
-    processStyleToken(token)
+    processStyleToken(token, updateTextStatus)
     return true
   } else if (symbolTokens.length > 0) {
     const token = symbolTokens.pop()
-    processSymbolToken(token)
+    processSymbolToken(token, updateTextStatus)
     return true
   } else {
     return false
@@ -143,7 +143,7 @@ const finishedProcessing = (libraryName) => {
 
 }
 
-const processStyleToken = (token) => {
+const processStyleToken = (token, updateTextStatus) => {
 
   let newToken
   newToken = findTokenMatch(token, lookupAgainst)
@@ -152,16 +152,20 @@ const processStyleToken = (token) => {
   // Token we want to replace
   if (token.layer.type == "Override") {
      console.log('\x1b[37m', `  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
+     updateTextStatus(`  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`)
   } else {
      console.log('\x1b[37m', `  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
+     updateTextStatus(`  [${token.layer.type}] [${token.context.toString()}]`)
   }
   // Token we found that matches
   if (newToken.name != undefined) {
     console.log('\x1b[37m', `   ∟ [${newToken.name}]`) // newToken [object Object]
+    updateTextStatus(`   ∟ [${newToken.name}]`)
     swapTokens(token, newToken)
     tokenCount++
   } else {
     console.log('\x1b[31m', `   ∟ [Not Match Found!]`)
+    updateTextStatus(`   ∟ [Not Match Found!]`)
     tokenMissingCount++
     tokenMissingNames.push(token.context.toString())
     // console.log(`   ∟ ${token.context.toString()}`)
@@ -169,7 +173,7 @@ const processStyleToken = (token) => {
   updateProgress()
 }
 
-const processSymbolToken = (token) => {
+const processSymbolToken = (token, updateTextStatus) => {
 
   let newToken
   newToken = findTokenMatch(token, lookupAgainst)
@@ -178,16 +182,20 @@ const processSymbolToken = (token) => {
   // Token we want to replace
   if (token.layer.type == "Override") {
      console.log('\x1b[37m', `  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
+     updateTextStatus(`  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`)
   } else {
      console.log('\x1b[37m', `  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
+     updateTextStatus(`  [${token.layer.type}] [${token.context.toString()}]`)
   }
   // Token we found that matches
   if (newToken.name != undefined) {
     console.log('\x1b[37m', `   ∟ [${newToken.name}]`) // newToken [object Object]
+    updateTextStatus(`   ∟ [${newToken.name}]`)
     swapTokens(token, newToken)
     tokenCount++
   } else {
     console.log('\x1b[31m', `   ∟ [Not Match Found!]`)
+    updateTextStatus(`   ∟ [Not Match Found!]`)
     tokenMissingCount++
     tokenMissingNames.push(token.context.toString())
     // console.log(`   ∟ ${token.context.toString()}`)

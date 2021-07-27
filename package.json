@@ -18,7 +18,7 @@
   },
   "scripts": {
     "build": "skpm-build",
-    "watch": "skpm-build --watch",
+    "dev": "skpm-build --watch",
     "start": "skpm-build --watch",
     "postinstall": "npm run build && skpm-link",
     "log": "skpm log -f",

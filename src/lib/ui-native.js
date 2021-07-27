@@ -4,6 +4,7 @@ import createFloatingPanel from '../ui/create-floating-panel'
 import createText from '../ui/create-text'
 import createScrollView from '../ui/create-scroll-view'
 import createRadioButtons from '../ui/create-radio-buttons'
+import createTextView from '../ui/create-textview'
 
 import styles from '../ui/styles'
 
@@ -22,6 +23,9 @@ let events = {
   },
   resetProgress: () => {
 
+  },
+  updateTextStatus: () => {
+
   }
 }
 
@@ -37,6 +41,7 @@ export const showNativeUI = (libraries) => {
   progressView = data.view
   progressUpdate = data.updateProgress
   events.resetProgress = data.resetProgress
+  events.updateTextStatus = data.updateTextStatus
 
   progressView.setHidden(true)
 
@@ -61,7 +66,6 @@ const libraryWasSelected = (lib, applyToSelection) => {
   progressView.setHidden(false)
 
   events.onProgressUpdate = (perc) => {
-    console.log("Progress is " + (perc * 100) + "%")
     progressUpdate(perc)
   }
 
@@ -126,7 +130,7 @@ const createProgressView = (panelStyles, theme) => {
   let panelContent = createView(NSMakeRect(0, 0, panelStyles.panelWidth, panelStyles.panelHeight - panelStyles.panelHeader))
   let themesTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `..`, NSMakeRect(20, 55, 200, 18))
 
-  let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.progressFont, `..`, NSMakeRect(20, 428, 200, 18))
+  let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.progressFont, `..`, NSMakeRect(20, 428, 180, 18))
   let progressBar = createProgressBar(NSMakeRect(20, 400, panelStyles.panelWidth-40, 18))
 
   let completeButton = NSButton.alloc().initWithFrame(NSMakeRect(panelStyles.panelWidth-80-12,420,80,36))
@@ -139,7 +143,16 @@ const createProgressView = (panelStyles, theme) => {
     processingHasFinished();
   })
 
-  const ignore = [ themesTitle, progressTitle, progressBar, completeButton ].forEach(i => panelContent.addSubview(i))
+  let textView = createTextView(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.logFont, ``, NSMakeRect(0, 0, panelStyles.panelWidth-50, 200))
+  let textScroll = createScrollView(theme,NSMakeRect(20,90,panelStyles.panelWidth-40,239))
+  textScroll.addSubview(textView)
+  textScroll.setDocumentView(textView)
+
+  const ignore = [ themesTitle, progressTitle, progressBar, completeButton, textScroll ].forEach(i => panelContent.addSubview(i))
+
+  const updateTextStatus = (string) => {
+    textView.string = textView.string() + string + "\n"
+  }
 
   const updateProgress = (perc) => {
     progressTitle.setStringValue("Replacing: " + Math.round(perc*100) + "%")
@@ -159,5 +172,9 @@ const createProgressView = (panelStyles, theme) => {
 
   resetProgress();
 
-  return { view: panelContent, updateProgress: updateProgress, resetProgress: resetProgress }
+  return { view: panelContent, 
+            updateProgress: updateProgress, 
+            resetProgress: resetProgress, 
+            updateTextStatus: updateTextStatus 
+          }
 }
