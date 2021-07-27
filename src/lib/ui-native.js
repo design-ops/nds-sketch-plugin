@@ -169,6 +169,7 @@ const createProgressView = (panelStyles, theme) => {
     completeButton.enabled = false
     themesTitle.setHidden(true)
     progressTitle.setStringValue("Analysing Document...")
+    textView.string = ""
   }
 
   resetProgress();
