@@ -61,7 +61,7 @@ const libraryWasSelected = (lib, applyToSelection) => {
   progressView.setHidden(false)
 
   events.onProgressUpdate = (perc) => {
-    console.log("progress is " + (perc * 100) + "%")
+    console.log("Progress is " + (perc * 100) + "%")
     progressUpdate(perc)
   }
 
@@ -89,13 +89,11 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
   )
   let swapTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Select Option`, NSMakeRect(20, 358, 200, 18))
 
-
   let panelContent = createView(NSMakeRect(0, 0, panelStyles.panelWidth, panelStyles.panelHeight - panelStyles.panelHeader))
   let libraryTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `Select Library`, NSMakeRect(20, 55, 200, 18))
 
   let libraryScroll = createScrollView(theme,NSMakeRect(20,90,338,239))
   let libraryContent = createView(NSMakeRect(0,0,panelStyles.itemWidth,panelStyles.itemHeight * libraries.length))
-
 
   libraries.forEach((lib, i) => {
     let listItem = createView(NSMakeRect(0,panelStyles.itemHeight*i,panelStyles.itemWidth,panelStyles.itemHeight))
@@ -144,7 +142,7 @@ const createProgressView = (panelStyles, theme) => {
   const ignore = [ themesTitle, progressTitle, progressBar, completeButton ].forEach(i => panelContent.addSubview(i))
 
   const updateProgress = (perc) => {
-    progressTitle.setStringValue("Swapping: " + Math.round(perc*100) + "%")
+    progressTitle.setStringValue("Replacing: " + Math.round(perc*100) + "%")
     progressBar.indeterminate = false
     progressBar.setDoubleValue(perc*100.0)
     if (perc >= 1) {

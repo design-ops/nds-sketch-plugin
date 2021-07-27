@@ -103,7 +103,7 @@ const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, prog
       clearInterval( interval )
     }
   }, 100)
-  
+
 }
 
 const updateNext = () => {
@@ -140,9 +140,6 @@ const finishedProcessing = (libraryName) => {
   if (tokenMissingNames.length > 0) {
     UI.alert('Done, but!', `I did not find these tokens: /n ${tokenMissingNames}`)
   }
-  // TODO:
-  // Consider adding extensive error message
-  // eg. If 'notFound', which Tokens where not found?
 
 }
 
