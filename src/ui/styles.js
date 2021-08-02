@@ -5,7 +5,7 @@ export default function styles() {
 		panelHeader: 20,
 		panelHeight: 483,
 		panelWidth: 378,
-		panelGutter: 15,
+		panelGutter: 15, // NSFont(name: "SFMono-Regular", size: 12)
 
 		// List
 		itemHeight: 50,
@@ -20,7 +20,7 @@ export default function styles() {
 		progressFont: NSFont.systemFontOfSize(12),
 		titleFont: NSFont.boldSystemFontOfSize(12),
 		subtitleFont: NSFont.systemFontOfSize(10),
-		logFont: NSFont.systemFontOfSize(10),
+		logFont: NSFont.systemFontOfSize(11),
 
 		//Colors
 		darkTextGrey: NSColor.colorWithCalibratedRed_green_blue_alpha(0,0,0,0.4),

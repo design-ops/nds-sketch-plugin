@@ -152,20 +152,20 @@ const processStyleToken = (token, updateTextStatus) => {
   // Token we want to replace
   if (token.layer.type == "Override") {
      console.log('\x1b[37m', `  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
-     updateTextStatus(`  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`)
+     updateTextStatus(`${token.context.toString()}`)
   } else {
      console.log('\x1b[37m', `  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
-     updateTextStatus(`  [${token.layer.type}] [${token.context.toString()}]`)
+     updateTextStatus(`${token.context.toString()}`)
   }
   // Token we found that matches
   if (newToken.name != undefined) {
     console.log('\x1b[37m', `   ∟ [${newToken.name}]`) // newToken [object Object]
-    updateTextStatus(`   ∟ [${newToken.name}]`)
+    updateTextStatus(`  ∟ ${newToken.name}\n`)
     swapTokens(token, newToken)
     tokenCount++
   } else {
-    console.log('\x1b[31m', `   ∟ [Not Match Found!]`)
-    updateTextStatus(`   ∟ [Not Match Found!]`)
+    console.log('\x1b[31m', `   ∟ [No Match Found!]`)
+    updateTextStatus(`  ∟ No Match Found!\n`)
     tokenMissingCount++
     tokenMissingNames.push(token.context.toString())
     // console.log(`   ∟ ${token.context.toString()}`)
@@ -182,20 +182,20 @@ const processSymbolToken = (token, updateTextStatus) => {
   // Token we want to replace
   if (token.layer.type == "Override") {
      console.log('\x1b[37m', `  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
-     updateTextStatus(`  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`)
+     updateTextStatus(`${token.context.toString()}`)
   } else {
      console.log('\x1b[37m', `  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
-     updateTextStatus(`  [${token.layer.type}] [${token.context.toString()}]`)
+     updateTextStatus(`${token.context.toString()}`)
   }
   // Token we found that matches
   if (newToken.name != undefined) {
     console.log('\x1b[37m', `   ∟ [${newToken.name}]`) // newToken [object Object]
-    updateTextStatus(`   ∟ [${newToken.name}]`)
+    updateTextStatus(`  ∟ ${newToken.name}\n`)
     swapTokens(token, newToken)
     tokenCount++
   } else {
-    console.log('\x1b[31m', `   ∟ [Not Match Found!]`)
-    updateTextStatus(`   ∟ [Not Match Found!]`)
+    console.log('\x1b[31m', `   ∟ [No Match Found!]`)
+    updateTextStatus(`  ∟ No Match Found!\n`)
     tokenMissingCount++
     tokenMissingNames.push(token.context.toString())
     // console.log(`   ∟ ${token.context.toString()}`)
