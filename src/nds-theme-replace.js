@@ -1,7 +1,8 @@
 import { Document, Library, UI } from "sketch";
 import { createTextLayerSymbolLookup, swapTokens, findTokenMatch } from "./lib/library"
 import { getIdentifiersIn } from './lib/identifier'
-import { getSelectedLayers } from './lib/layers'
+import { getSelectedLayers, getLayersFromAllPages } from './lib/layers'
+import { showNativeUI } from './lib/ui-native'
 
 export default function onRun() {
   console.log("------------------------------")
@@ -32,100 +33,95 @@ const showSelectLibrary = () => {
 
   console.log("[Show Select Library Window]")
 
-  // If we use a custom UI, we can remove the trailing characters from the ID.
-  UI.getInputFromUser(
-    "NDS Theme Replacer",
-    {
-      description: "Swap out the current theme for a new one.",
-      type: UI.INPUT_TYPE.selection,
-      possibleValues: libNames.map(el => el.name + " (" + el.id.slice(-6) + ")"),
-    },
-    (err, value) => {
-      if (err) {
-        console.log("[Canceled]")
-        return
-      } else {
-        const found = libNames.find(el => el.name + " (" + el.id.slice(-6) + ")" == value)
-        console.log(`[Selected Library] - "${found.name} (${found.id.slice(-6)})"`)
-        getIdentifiers(found.id, found.name)
-      }
-    }
-  )
+  // display a native UI here...
+  const ui = showNativeUI(libNames)
+  ui.onLibrarySelected = (library, applyToSelection) => {
+    console.log("librarySelected!", library, applyToSelection)
+    processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
+  }
 
 }
 
-const getIdentifiers = (libraryLookupId, libraryName) => {
+// TODO - move all of this into it's own module!!
+
+let tokenCount = 0 // Reset Token count
+let tokenMissingCount = 0 // Reset Missing Token count
+let tokenMissingNames = []
+let lookupAgainst = null
+let tokens = []
+let symbolTokens = []
+let styleTokens = []
+
+let progressMethod = (str) => {}
+
+const updateProgress = () => {
+  if (tokens.length > 0) progressMethod( (tokenCount + tokenMissingCount) / tokens.length )
+}
+
+const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, progress, updateTextStatus) => {
+
+  tokenCount = 0 // Reset Token count
+  tokenMissingCount = 0 // Reset Missing Token count
+  tokenMissingNames = []
+  lookupAgainst = null
+  tokens = []
+  symbolTokens = []
+  styleTokens = []
+
+  progressMethod = progress
 
   const document = Document.getSelectedDocument()
-  const targetLayer = getSelectedLayers(document)
-  const getArtboards = targetLayer.layers.filter(tgt => tgt.type == "Artboard")
-  const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document) // Create Lookup for all Libraries
-  const lookupAgainst = createTextLayerSymbolLookup(Library.getLibraries().filter(library => library.id == libraryLookupId), document) // Create Lookup for the Selected Library
+  let getArtboards;
+  if (applyToSelection === true) {
 
-  var tokenCount = 0 // Reset Token count
-  var tokenMissingCount = 0 // Reset Missing Token count
-  var tokenMissingNames = []
+    const targetLayer = getSelectedLayers(document)
+    getArtboards = targetLayer.layers.filter(tgt => tgt.type == "Artboard")
+  } else {
+    // whole document...
+    // loop through pages, and then loop through their layers and filter to just Artboards...
+    const allLayers = getLayersFromAllPages(document)
+    getArtboards = allLayers.filter(tgt => tgt.type == "Artboard")
+    console.log("getArtBoards baby:", getArtboards);
+  }
+  const lookup = createTextLayerSymbolLookup(Library.getLibraries(), document) // Create Lookup for all Libraries
+  lookupAgainst = createTextLayerSymbolLookup(Library.getLibraries().filter(library => library.id == libraryLookupId), document) // Create Lookup for the Selected Library
 
   console.log("[Get Identifiers]")
-  const tokens = getIdentifiersIn(getArtboards, lookup)
+  tokens = getIdentifiersIn(getArtboards, lookup)
 
   console.log("[Items to replace]")
-  let symbolTokens = tokens.filter(tk => tk.layer.type == "SymbolInstance" || (tk.layer.type == "Override" && tk.layer.property == "symbolID"))
-  let styleTokens = tokens.filter(tk => tk.layer.type == "ShapePath" || tk.layer.type == "Text" || (tk.layer.type == "Override" && tk.layer.property == "layerStyle") || (tk.layer.type == "Override" && tk.layer.property == "textStyle"))
+  symbolTokens = tokens.filter(tk => tk.layer.type == "SymbolInstance" || (tk.layer.type == "Override" && tk.layer.property == "symbolID"))
+  styleTokens = tokens.filter(tk => tk.layer.type == "ShapePath" || tk.layer.type == "Text" || (tk.layer.type == "Override" && tk.layer.property == "layerStyle") || (tk.layer.type == "Override" && tk.layer.property == "textStyle"))
 
-  styleTokens.forEach( token => {
+  // styleTokens.forEach( token => processStyleToken(token))
+  // symbolTokens.forEach( token => processSymbolToken(token) )
 
-    let newToken
-    newToken = findTokenMatch(token, lookupAgainst)
-
-    //
-    // Token we want to replace
-    if (token.layer.type == "Override") {
-       console.log('\x1b[37m', `  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
-    } else {
-       console.log('\x1b[37m', `  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
+  const interval = setInterval(() => {
+    if (!updateNext(updateTextStatus)) {
+      finishedProcessing(libraryName)
+      console.log("finished updating!")
+      clearInterval( interval )
     }
-    // Token we found that matches
-    if (newToken.name != undefined) {
-      console.log('\x1b[37m', `   ∟ [${newToken.name}]`) // newToken [object Object]
-      swapTokens(token, newToken)
-      tokenCount++
-    } else {
-      console.log('\x1b[31m', `   ∟ [Not Match Found!]`)
-      tokenMissingCount++
-      tokenMissingNames.push(token.context.toString())
-      // console.log(`   ∟ ${token.context.toString()}`)
-    }
+  }, 100)
 
-  })
+}
 
-  symbolTokens.forEach( token => {
+const updateNext = (updateTextStatus) => {
+  if (styleTokens.length > 0) {
+    const token = styleTokens.pop()
+    processStyleToken(token, updateTextStatus)
+    return true
+  } else if (symbolTokens.length > 0) {
+    const token = symbolTokens.pop()
+    processSymbolToken(token, updateTextStatus)
+    return true
+  } else {
+    return false
+  }
+}
 
-    let newToken
-    newToken = findTokenMatch(token, lookupAgainst)
-
-    //
-    // Token we want to replace
-    if (token.layer.type == "Override") {
-       console.log('\x1b[37m', `  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
-    } else {
-       console.log('\x1b[37m', `  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
-    }
-    // Token we found that matches
-    if (newToken.name != undefined) {
-      console.log('\x1b[37m', `   ∟ [${newToken.name}]`) // newToken [object Object]
-      swapTokens(token, newToken)
-      tokenCount++
-    } else {
-      console.log('\x1b[31m', `   ∟ [Not Match Found!]`)
-      tokenMissingCount++
-      tokenMissingNames.push(token.context.toString())
-      // console.log(`   ∟ ${token.context.toString()}`)
-    }
-
-  })
-
-  //
+const finishedProcessing = (libraryName) => {
+   //
   // Sketch UI Message
   let notFound = ''
   if (tokenCount>0) {
@@ -145,10 +141,64 @@ const getIdentifiers = (libraryLookupId, libraryName) => {
     UI.alert('Done, but!', `I did not find these tokens: /n ${tokenMissingNames}`)
   }
 
+}
 
-  // TODO:
-  // Consider adding extensive error message
-  // eg. If 'notFound', which Tokens where not found?
+const processStyleToken = (token, updateTextStatus) => {
 
+  let newToken
+  newToken = findTokenMatch(token, lookupAgainst)
 
+  //
+  // Token we want to replace
+  if (token.layer.type == "Override") {
+     console.log('\x1b[37m', `  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
+     updateTextStatus(`${token.context.toString()}`)
+  } else {
+     console.log('\x1b[37m', `  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
+     updateTextStatus(`${token.context.toString()}`)
+  }
+  // Token we found that matches
+  if (newToken.name != undefined) {
+    console.log('\x1b[37m', `   ∟ [${newToken.name}]`) // newToken [object Object]
+    updateTextStatus(`  ∟ ${newToken.name}\n`)
+    swapTokens(token, newToken)
+    tokenCount++
+  } else {
+    console.log('\x1b[31m', `   ∟ [No Match Found!]`)
+    updateTextStatus(`  ∟ No Match Found!\n`)
+    tokenMissingCount++
+    tokenMissingNames.push(token.context.toString())
+    // console.log(`   ∟ ${token.context.toString()}`)
+  }
+  updateProgress()
+}
+
+const processSymbolToken = (token, updateTextStatus) => {
+
+  let newToken
+  newToken = findTokenMatch(token, lookupAgainst)
+
+  //
+  // Token we want to replace
+  if (token.layer.type == "Override") {
+     console.log('\x1b[37m', `  [${token.layer.type}: ${token.layer.affectedLayer.type}] [${token.context.toString()}]`) // token [object Object]
+     updateTextStatus(`${token.context.toString()}`)
+  } else {
+     console.log('\x1b[37m', `  [${token.layer.type}] [${token.context.toString()}]`) // token [object Object]
+     updateTextStatus(`${token.context.toString()}`)
+  }
+  // Token we found that matches
+  if (newToken.name != undefined) {
+    console.log('\x1b[37m', `   ∟ [${newToken.name}]`) // newToken [object Object]
+    updateTextStatus(`  ∟ ${newToken.name}\n`)
+    swapTokens(token, newToken)
+    tokenCount++
+  } else {
+    console.log('\x1b[31m', `   ∟ [No Match Found!]`)
+    updateTextStatus(`  ∟ No Match Found!\n`)
+    tokenMissingCount++
+    tokenMissingNames.push(token.context.toString())
+    // console.log(`   ∟ ${token.context.toString()}`)
+  }
+  updateProgress()
 }

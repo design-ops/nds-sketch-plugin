@@ -1,5 +1,6 @@
 # build artefacts
 switchthemelibrary.sketchplugin
+*.sketchplugin/*
 
 # npm
 node_modules

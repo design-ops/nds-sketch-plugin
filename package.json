@@ -1,8 +1,8 @@
 {
-  "name": "NDS Theme Replacer",
+  "name": "NDS-Theme-Replacer",
   "decription": "Replace Natural Design System theme libraries",
   "homepage": "https://github.com/design-ops/nds-sketch-plugin",
-  "version": "0.1",
+  "version": "0.1.0",
   "author": "design-ops",
   "engines": {
     "sketch": ">=3.0"
@@ -18,7 +18,7 @@
   },
   "scripts": {
     "build": "skpm-build",
-    "watch": "skpm-build --watch",
+    "dev": "skpm-build --watch",
     "start": "skpm-build --watch",
     "postinstall": "npm run build && skpm-link",
     "log": "skpm log -f",

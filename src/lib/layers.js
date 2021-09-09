@@ -15,3 +15,11 @@ const selectedLayersAreArtboard = (selectedLayers) => {
     }
     return false
 }
+
+export const getLayersFromAllPages = (document) => {
+    let selectedLayers = [];
+    document.pages.forEach( page => {
+        selectedLayers = selectedLayers.concat(page.layers);
+    })
+    return selectedLayers;
+}
