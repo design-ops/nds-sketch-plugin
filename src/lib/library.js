@@ -1,5 +1,5 @@
 import { Library, Document } from "sketch";
-import { matchScore } from './identifierMatcher'
+import { matchScore, getPathTokenAndTheme } from './identifierMatcher'
 
 export const getAllLibraries = () => {
     //  array that will be populated with available libaries to import
@@ -8,7 +8,6 @@ export const getAllLibraries = () => {
     var libraries = Library.getLibraries();
 
     libraries.forEach(lib => {
-        // @TODO filter out inactive libraries
         options.push(lib.name);
     });
 
@@ -81,6 +80,11 @@ export const findTokenMatch = (token, lookupAgainst) => {
   let newToken = {}
   for(var styleName in lookupAgainst) {
     styleValue = lookupAgainst[styleName]
+    const [, , theme] = getPathTokenAndTheme(styleValue.name)
+    // TODO: Update when we have the actual theme name
+
+    if (theme && theme !== "") continue // Pass in the theme name eg. "dark"
+
     const getScore = matchScore(token.context.toString(), styleValue.name)
     if (getScore > currentScore) { // Only look for the highest scoring result
       currentScore = getScore
