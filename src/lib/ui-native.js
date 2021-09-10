@@ -106,22 +106,25 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
     const today = new Date()
     const year = lib.lastModified.getFullYear()
     const month = lib.lastModified.getMonth()
+    const day = lib.lastModified.getDay()
     const date = lib.lastModified.getDate()
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
     const monthName = months[month]
+    const dayName = days[day]
     const hours = lib.lastModified.getHours()
     const minutes = lib.lastModified.getMinutes()
-    let showDate
+    let showInfo
     if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate()) {
-      showDate = `Today at ${hours}:${minutes} - ${lib.type}`
+      showInfo = `Today at ${hours}:${minutes} - ${lib.type}`
     } else if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate() - 1) {
-      showDate = `Yesterday at ${hours}:${minutes} - ${lib.type}`
+      showInfo = `Yesterday at ${hours}:${minutes} - ${lib.type}`
     } else {
-      showDate = `${date} ${monthName} ${year} at ${hours}:${minutes} - ${lib.type}`
+      showInfo = `${dayName} ${monthName} ${date}, ${year} at ${hours}:${minutes} - ${lib.type}`
     }
 
-    let title = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.titleFont, lib.name, NSMakeRect(20, 12, 200, 18))
-    let subtitle = createText(theme, panelStyles.darkTextGrey, panelStyles.lightTextGrey, panelStyles.subtitleFont, showDate, NSMakeRect(20, 28, 200, 18)) // Fri Sep 10, 2021 - 11:30
+    let title = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.titleFont, lib.name, NSMakeRect(20, 12, 220, 18))
+    let subtitle = createText(theme, panelStyles.darkTextGrey, panelStyles.lightTextGrey, panelStyles.subtitleFont, showInfo, NSMakeRect(20, 28, 220, 18)) // Fri Sep 10, 2021 - 11:30
 
     let button = NSButton.alloc().initWithFrame(NSMakeRect(237,10,80,36))
     button.setTitle('Swap')
