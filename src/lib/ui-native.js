@@ -102,7 +102,20 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
   libraries.forEach((lib, i) => {
     let listItem = createView(NSMakeRect(0,panelStyles.itemHeight*i,panelStyles.itemWidth,panelStyles.itemHeight))
 
-    let title = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.titleFont, lib.name, NSMakeRect(20, 20, 200, 18))
+    // Create a proper date & time
+    const year = lib.lastModified.getFullYear() // 2019
+    const date = lib.lastModified.getDate() // 23
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December']
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+    const monthName = months[lib.lastModified.getMonth()]
+    const dayName = days[lib.lastModified.getDay()]
+    const hours = lib.lastModified.getHours()
+    const minutes = lib.lastModified.getMinutes()
+
+    const showDate =  `${dayName}, ${date} ${monthName} ${year} - ${hours}:${minutes}`
+
+    let title = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.titleFont, lib.name, NSMakeRect(20, 12, 200, 18))
+    let subtitle = createText(theme, panelStyles.darkTextGrey, panelStyles.lightTextGrey, panelStyles.subtitleFont, showDate, NSMakeRect(20, 28, 200, 18)) // Fri Sep 10, 2021 - 11:30
 
     let button = NSButton.alloc().initWithFrame(NSMakeRect(237,10,80,36))
     button.setTitle('Swap')
@@ -114,7 +127,7 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
       libraryWasSelected(lib, applyToSelection)
     })
 
-    const wut = [title, button].forEach(i => listItem.addSubview(i))
+    const wut = [title, subtitle, button].forEach(i => listItem.addSubview(i))
 
     libraryContent.addSubview(listItem)
   })
