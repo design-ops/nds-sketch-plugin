@@ -103,16 +103,22 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
     let listItem = createView(NSMakeRect(0,panelStyles.itemHeight*i,panelStyles.itemWidth,panelStyles.itemHeight))
 
     // Create a proper date & time
-    const year = lib.lastModified.getFullYear() // 2019
-    const date = lib.lastModified.getDate() // 23
-    const months = ['January','February','March','April','May','June','July','August','September','October','November','December']
-    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-    const monthName = months[lib.lastModified.getMonth()]
-    const dayName = days[lib.lastModified.getDay()]
+    const today = new Date()
+    const year = lib.lastModified.getFullYear()
+    const month = lib.lastModified.getMonth()
+    const date = lib.lastModified.getDate()
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    const monthName = months[month]
     const hours = lib.lastModified.getHours()
     const minutes = lib.lastModified.getMinutes()
-
-    const showDate =  `${dayName}, ${date} ${monthName} ${year} - ${hours}:${minutes}`
+    let showDate
+    if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate()) {
+      showDate = `Today at ${hours}:${minutes} - ${lib.type}`
+    } else if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate() - 1) {
+      showDate = `Yesterday at ${hours}:${minutes} - ${lib.type}`
+    } else {
+      showDate = `${date} ${monthName} ${year} at ${hours}:${minutes} - ${lib.type}`
+    }
 
     let title = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.titleFont, lib.name, NSMakeRect(20, 12, 200, 18))
     let subtitle = createText(theme, panelStyles.darkTextGrey, panelStyles.lightTextGrey, panelStyles.subtitleFont, showDate, NSMakeRect(20, 28, 200, 18)) // Fri Sep 10, 2021 - 11:30
