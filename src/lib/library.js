@@ -97,7 +97,7 @@ export const findTokenMatch = (token, lookupAgainst) => {
 }
 
 export const resizeTokens = (token) => {
-  console.log(`Resize: ${token.layer.name}`)
+  // console.log(`Resize: ${token.layer.name}`)
   if (token.layer.type == "SymbolInstance") {
     token.resizeWithSmartLayout()
   }
