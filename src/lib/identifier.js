@@ -119,8 +119,9 @@ const getNestedContexts = (layer, context, lookup) => {
 
               // Context of the layer
               // Remove the layer name because we only need the context.
-              // eg. `artboard-name/symbol-name/layer-name` > 'artboard-name/symbol-name'
-              newContext._arr.pop()
+              // Since we know this is not nested, we only need the first bit.
+              // eg. `artboard-name/symbol-name/layer-name` > 'artboard-name'
+              newContext._arr.splice(1)
 
               // Get Token name
               // Get the actual shared style name
