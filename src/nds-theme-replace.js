@@ -97,8 +97,11 @@ const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, prog
   // styleTokens.forEach( token => processStyleToken(token))
   // symbolTokens.forEach( token => processSymbolToken(token) )
 
+  const theme = null
+  //const theme = "dark"
+
   const interval = setInterval(() => {
-    if (!updateNext(updateTextStatus)) {
+    if (!updateNext(theme, updateTextStatus)) {
       finishedProcessing(libraryName)
       console.log("[Operation Complete]")
       clearInterval( interval )
@@ -107,14 +110,14 @@ const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, prog
 
 }
 
-const updateNext = (updateTextStatus) => {
+const updateNext = (theme, updateTextStatus) => {
   if (styleTokens.length > 0) {
     const token = styleTokens.pop()
-    processStyleToken(token, updateTextStatus)
+    processStyleToken(theme, token, updateTextStatus)
     return true
   } else if (symbolTokens.length > 0) {
     const token = symbolTokens.pop()
-    processSymbolToken(token, updateTextStatus)
+    processSymbolToken(theme, token, updateTextStatus)
     return true
   } else {
     return false
@@ -144,10 +147,10 @@ const finishedProcessing = (libraryName) => {
 
 }
 
-const processStyleToken = (token, updateTextStatus) => {
+const processStyleToken = (theme, token, updateTextStatus) => {
 
   let newToken
-  newToken = findTokenMatch(token, lookupAgainst)
+  newToken = findTokenMatch(theme, token, lookupAgainst)
 
   //
   // Token we want to replace
@@ -177,7 +180,7 @@ const processStyleToken = (token, updateTextStatus) => {
 const processSymbolToken = (token, updateTextStatus) => {
 
   let newToken
-  newToken = findTokenMatch(token, lookupAgainst)
+  newToken = findTokenMatch(theme, token, lookupAgainst)
 
   //
   // Token we want to replace

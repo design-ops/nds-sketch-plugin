@@ -73,7 +73,7 @@ export const swapTokens = (token, newToken) => {
 
 }
 
-export const findTokenMatch = (token, lookupAgainst) => {
+export const findTokenMatch = (themeRequired, token, lookupAgainst) => {
 
   let styleValue
   let currentScore = 0
@@ -81,9 +81,8 @@ export const findTokenMatch = (token, lookupAgainst) => {
   for(var styleName in lookupAgainst) {
     styleValue = lookupAgainst[styleName]
     const [, , theme] = getPathTokenAndTheme(styleValue.name)
-    // TODO: Update when we have the actual theme name
-
-    if (theme && theme !== "") continue // Pass in the theme name eg. "dark"
+    
+    if (themeRequired !== null && theme !== themeRequired) continue // Pass in the theme name eg. "dark"
 
     const getScore = matchScore(token.context.toString(), styleValue.name)
     if (getScore > currentScore) { // Only look for the highest scoring result
