@@ -97,8 +97,8 @@ const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, prog
   // styleTokens.forEach( token => processStyleToken(token))
   // symbolTokens.forEach( token => processSymbolToken(token) )
 
-  const theme = null
-  //const theme = "dark"
+  const theme = ""
+  // const theme = "dark"
 
   const interval = setInterval(() => {
     if (!updateNext(theme, updateTextStatus)) {
@@ -177,7 +177,7 @@ const processStyleToken = (theme, token, updateTextStatus) => {
   updateProgress()
 }
 
-const processSymbolToken = (token, updateTextStatus) => {
+const processSymbolToken = (theme, token, updateTextStatus) => {
 
   let newToken
   newToken = findTokenMatch(theme, token, lookupAgainst)
