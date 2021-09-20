@@ -124,3 +124,43 @@ export const createTextLayerSymbolLookup = (libraries, document) => {
     })
     return lookup;
 }
+
+// an method that gets all the references (symbols, text styles, layer styles)
+// from every library and put them in one object.
+export const getAvailableThemeNames = (libraries, document) => {
+  let themeNames = new Set()
+  libraries.forEach(library => {
+      var textStyles = library.getImportableTextStyleReferencesForDocument(document)
+      textStyles.forEach(text => {
+          if (text.name.indexOf("@") == 0) {
+            themeNames.add(text.name.split("/")[0])
+          } else {
+            themeNames.add("@@default")
+          }
+      })
+
+      var layerStyles = library.getImportableLayerStyleReferencesForDocument(document)
+      layerStyles.forEach(layer => {
+        if (layer.name.indexOf("@") == 0) {
+          themeNames.add(layer.name.split("/")[0])
+        } else {
+          themeNames.add("@@default")
+        }
+      })
+
+      var symbols = library.getImportableSymbolReferencesForDocument(document)
+      symbols.forEach(symbol => {
+        if (symbol.name.indexOf("@") == 0) {
+          themeNames.add(symbol.name.split("/")[0])
+        } else {
+          themeNames.add("@@default")
+        }
+      })
+  })
+  let lookup = []
+  // remove @
+  themeNames.forEach(name => lookup.push(name.substring(1)))
+  // convert @default to empty string / ""
+  lookup = lookup.map(name => name === "@default" ? "" : name);
+  return lookup;
+}

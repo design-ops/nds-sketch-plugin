@@ -1,5 +1,5 @@
 import { Document, Library, UI } from "sketch";
-import { createTextLayerSymbolLookup, swapTokens, findTokenMatch } from "./lib/library"
+import { getAvailableThemeNames, createTextLayerSymbolLookup, swapTokens, findTokenMatch } from "./lib/library"
 import { getIdentifiersIn } from './lib/identifier'
 import { getSelectedLayers, getLayersFromAllPages } from './lib/layers'
 import { showNativeUI } from './lib/ui-native'
@@ -37,7 +37,16 @@ const showSelectLibrary = () => {
   const ui = showNativeUI(libNames)
   ui.onLibrarySelected = (library, applyToSelection) => {
     // console.log("librarySelected!", library, applyToSelection)
-    processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
+    const themes = getAvailableThemeNames(Library.getLibraries().filter(library2 => library2.id == library.id), Document.getSelectedDocument())
+    ui.updateTextStatus( "Available themes: '" + themes.join("', '")+"'")
+    if (themes.length > 1) {
+      ui.updateTextStatus("Oh look at you - multiple themes, soon you'll be able to choose one")
+      // @TODO show something here to choose subtheme
+      processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
+    } else {
+      processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
+    }
+    
   }
 
 }
