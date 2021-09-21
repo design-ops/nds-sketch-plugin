@@ -38,9 +38,7 @@ const showSelectLibrary = () => {
   ui.onLibrarySelected = (library, applyToSelection) => {
     // console.log("librarySelected!", library, applyToSelection)
     const themes = getAvailableThemeNames(Library.getLibraries().filter(library2 => library2.id == library.id), Document.getSelectedDocument())
-    ui.updateTextStatus( "Available themes: '" + themes.join("', '")+"'")
     if (themes.length > 1) {
-      ui.updateTextStatus("Oh look at you - multiple themes, soon you'll be able to choose one")
       UI.getInputFromUser(
         "Which theme would you like?",
         {
@@ -49,16 +47,14 @@ const showSelectLibrary = () => {
         },
         (err, value) => {
           if (!err) {
-            ui.updateTextStatus("You chose " + value + ", that's a great choice!");
-            processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
-            // most likely the user canceled the input
+            if (value === "default") value = ""
+            processIdentifiers(value, applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
             return
           }
         }
       )
-
     } else {
-      processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
+      processIdentifiers("", applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
     }
     
   }
@@ -81,7 +77,7 @@ const updateProgress = () => {
   if (tokens.length > 0) progressMethod( (tokenCount + tokenMissingCount) / tokens.length )
 }
 
-const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, progress, updateTextStatus) => {
+const processIdentifiers = (theme, applyToSelection, libraryLookupId, libraryName, progress, updateTextStatus) => {
 
   tokenCount = 0 // Reset Token count
   tokenMissingCount = 0 // Reset Missing Token count
@@ -116,12 +112,6 @@ const processIdentifiers = (applyToSelection, libraryLookupId, libraryName, prog
   console.log("[Replacing Items]")
   symbolTokens = tokens.filter(tk => tk.layer.type == "SymbolInstance" || (tk.layer.type == "Override" && tk.layer.property == "symbolID"))
   styleTokens = tokens.filter(tk => tk.layer.type == "ShapePath" || tk.layer.type == "Text" || (tk.layer.type == "Override" && tk.layer.property == "layerStyle") || (tk.layer.type == "Override" && tk.layer.property == "textStyle"))
-
-  // styleTokens.forEach( token => processStyleToken(token))
-  // symbolTokens.forEach( token => processSymbolToken(token) )
-
-  const theme = ""
-  // const theme = "dark"
 
   const interval = setInterval(() => {
     if (!updateNext(theme, updateTextStatus)) {
