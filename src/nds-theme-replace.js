@@ -41,8 +41,22 @@ const showSelectLibrary = () => {
     ui.updateTextStatus( "Available themes: '" + themes.join("', '")+"'")
     if (themes.length > 1) {
       ui.updateTextStatus("Oh look at you - multiple themes, soon you'll be able to choose one")
-      // @TODO show something here to choose subtheme
-      processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
+      UI.getInputFromUser(
+        "Which theme would you like?",
+        {
+          type: UI.INPUT_TYPE.selection,
+          possibleValues: themes,
+        },
+        (err, value) => {
+          if (!err) {
+            ui.updateTextStatus("You chose " + value + ", that's a great choice!");
+            processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
+            // most likely the user canceled the input
+            return
+          }
+        }
+      )
+
     } else {
       processIdentifiers(applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
     }
