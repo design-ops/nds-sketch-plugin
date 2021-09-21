@@ -161,6 +161,6 @@ export const getAvailableThemeNames = (libraries, document) => {
   // remove @
   themeNames.forEach(name => lookup.push(name.substring(1)))
   // convert @default to empty string / ""
-  lookup = lookup.map(name => name === "@default" ? "" : name);
+  lookup = lookup.sort().map(name => name === "@default" ? "default" : name);
   return lookup;
 }
