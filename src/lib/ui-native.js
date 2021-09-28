@@ -103,24 +103,28 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
     let listItem = createView(NSMakeRect(0,panelStyles.itemHeight*i,panelStyles.itemWidth,panelStyles.itemHeight))
 
     // Create a proper date & time
-    const today = new Date()
-    const year = lib.lastModified.getFullYear()
-    const month = lib.lastModified.getMonth()
-    const day = lib.lastModified.getDay()
-    const date = lib.lastModified.getDate()
-    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
-    const monthName = months[month]
-    const dayName = days[day]
-    const hours = lib.lastModified.getHours()
-    const minutes = lib.lastModified.getMinutes()
     let showInfo
-    if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate()) {
-      showInfo = `Today at ${hours}:${minutes} - ${lib.type}`
-    } else if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate() - 1) {
-      showInfo = `Yesterday at ${hours}:${minutes} - ${lib.type}`
-    } else {
-      showInfo = `${dayName} ${monthName} ${date}, ${year} at ${hours}:${minutes} - ${lib.type}`
+    if (lib.lastModified != null) {
+      const today = new Date()
+      const year = lib.lastModified.getFullYear()
+      const month = lib.lastModified.getMonth()
+      const day = lib.lastModified.getDay()
+      const date = lib.lastModified.getDate()
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+      const monthName = months[month]
+      const dayName = days[day]
+      const hours = lib.lastModified.getHours()
+      const minutes = lib.lastModified.getMinutes()
+      if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate()) {
+        showInfo = `Today at ${hours}:${minutes} - ${lib.type}`
+      } else if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate() - 1) {
+        showInfo = `Yesterday at ${hours}:${minutes} - ${lib.type}`
+      } else {
+        showInfo = `${dayName} ${monthName} ${date}, ${year} at ${hours}:${minutes} - ${lib.type}`
+      }
+    } else { // If library is missing, deleted, we still need to show something.
+      showInfo = "Undefined"
     }
 
     let title = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.titleFont, lib.name, NSMakeRect(20, 12, 220, 18))
