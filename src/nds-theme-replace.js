@@ -40,7 +40,7 @@ const showSelectLibrary = () => {
     const themes = getAvailableThemeNames(Library.getLibraries().filter(library2 => library2.id == library.id), Document.getSelectedDocument())
     if (themes.length > 1) {
       UI.getInputFromUser(
-        "Which theme would you like?",
+        "Select a sub-theme",
         {
           type: UI.INPUT_TYPE.selection,
           possibleValues: themes,
@@ -56,7 +56,7 @@ const showSelectLibrary = () => {
     } else {
       processIdentifiers("", applyToSelection, library.id, library.name, ui.onProgressUpdate, ui.updateTextStatus)
     }
-    
+
   }
 
 }
