@@ -36,9 +36,10 @@ const showSelectLibrary = () => {
   // display a native UI here...
   const ui = showNativeUI(libNames)
   ui.onLibrarySelected = (library, applyToSelection) => {
-    // console.log("librarySelected!", library, applyToSelection)
+    console.log("[Library Selected: " + library.name + "]")
     const themes = getAvailableThemeNames(Library.getLibraries().filter(library2 => library2.id == library.id), Document.getSelectedDocument())
     if (themes.length > 1) {
+      console.log("[Show Select Sub Theme Window]")
       UI.getInputFromUser(
         "Select a sub-theme",
         {
