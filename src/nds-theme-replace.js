@@ -2,7 +2,7 @@ import { Document, Library, UI } from "sketch";
 import { getAvailableThemeNames, createTextLayerSymbolLookup, swapTokens, findTokenMatch } from "./lib/library"
 import { getIdentifiersIn } from './lib/identifier'
 import { getSelectedLayers, getLayersFromAllPages } from './lib/layers'
-import { showNativeUI } from './lib/ui-native'
+import { showNativeUI, updateProgressTitle } from './lib/ui-native'
 
 export default function onRun() {
   console.log("------------------------------")
@@ -75,7 +75,11 @@ let styleTokens = []
 let progressMethod = (str) => {}
 
 const updateProgress = () => {
-  if (tokens.length > 0) progressMethod( (tokenCount + tokenMissingCount) / tokens.length )
+  if (tokens.length > 0) {
+    progressMethod( (tokenCount + tokenMissingCount) / tokens.length )
+  } else {
+    progressMethod( 1 )
+  }
 }
 
 const processIdentifiers = (theme, applyToSelection, libraryLookupId, libraryName, progress, updateTextStatus) => {
@@ -109,18 +113,31 @@ const processIdentifiers = (theme, applyToSelection, libraryLookupId, libraryNam
   console.log("[Get Identifiers]")
   tokens = getIdentifiersIn(getArtboards, lookup)
 
-  // console.log("[Items to replace]")
   console.log("[Replacing Items]")
   symbolTokens = tokens.filter(tk => tk.layer.type == "SymbolInstance" || (tk.layer.type == "Override" && tk.layer.property == "symbolID"))
   styleTokens = tokens.filter(tk => tk.layer.type == "ShapePath" || tk.layer.type == "Text" || (tk.layer.type == "Override" && tk.layer.property == "layerStyle") || (tk.layer.type == "Override" && tk.layer.property == "textStyle"))
 
-  const interval = setInterval(() => {
-    if (!updateNext(theme, updateTextStatus)) {
-      finishedProcessing(libraryName)
-      console.log("[Operation Complete]")
-      clearInterval( interval )
-    }
-  }, 100)
+  var timeStart = Date.now()
+
+  if (styleTokens.length == 0 && symbolTokens.length == 0) {
+    updateProgress()
+    updateProgressTitle( "No Tokens Found!" )
+  } else {
+
+    const interval = setInterval(() => {
+
+      if (!updateNext(theme, updateTextStatus)) {
+        finishedProcessing(libraryName)
+        var timeEnd = Date.now()
+        const time = Math.floor( (timeEnd - timeStart) / 1000)
+        console.log("[Operation Completed in " + time + " Seconds]")
+        updateProgressTitle("Operation Completed in " + time + " Second"+ (time == 1 ? '' : 's') )
+        clearInterval( interval )
+      }
+
+    }, 0)
+
+  }
 
 }
 

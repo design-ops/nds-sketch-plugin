@@ -32,6 +32,11 @@ let events = {
 let selectLibraryView
 let progressView
 let progressUpdate
+let progressTitle
+
+export const updateProgressTitle = (title) => {
+  progressTitle.setStringValue(title)
+}
 
 export const showNativeUI = (libraries) => {
   let panelStyles = styles()
@@ -156,7 +161,7 @@ const createProgressView = (panelStyles, theme) => {
   let panelContent = createView(NSMakeRect(0, 0, panelStyles.panelWidth, panelStyles.panelHeight - panelStyles.panelHeader))
   let themesTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `..`, NSMakeRect(20, 55, 200, 18))
 
-  let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.progressFont, `..`, NSMakeRect(20, 428, 180, 18))
+  progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.progressFont, `..`, NSMakeRect(20, 428, 280, 18))
   let progressBar = createProgressBar(NSMakeRect(20, 400, panelStyles.panelWidth-40, 18))
 
   let completeButton = NSButton.alloc().initWithFrame(NSMakeRect(panelStyles.panelWidth-80-12,420,80,36))
@@ -178,15 +183,16 @@ const createProgressView = (panelStyles, theme) => {
 
   const updateTextStatus = (string) => {
     textView.string = textView.string() + string + "\n"
-    textView.scrollRangeToVisible( NSMakeRange( textView.string().length, 1 ) )
+    // Scroll to bottom
+    textView.scrollRangeToVisible( NSMakeRange( textView.string().length()-1 , 1 ) )
   }
 
   const updateProgress = (perc) => {
     progressTitle.setStringValue("Replacing: " + Math.round(perc*100) + "%")
     progressBar.indeterminate = false
     progressBar.setDoubleValue(perc*100.0)
+
     if (perc >= 1) {
-      progressTitle.setStringValue("Operation Complete")
       completeButton.enabled = true
     }
   }
