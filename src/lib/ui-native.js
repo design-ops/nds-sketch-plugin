@@ -32,6 +32,11 @@ let events = {
 let selectLibraryView
 let progressView
 let progressUpdate
+let progressTitle
+
+export const updateProgressTitle = (title) => {
+  progressTitle.setStringValue(title)
+}
 
 export const showNativeUI = (libraries) => {
   let panelStyles = styles()
@@ -102,7 +107,33 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
   libraries.forEach((lib, i) => {
     let listItem = createView(NSMakeRect(0,panelStyles.itemHeight*i,panelStyles.itemWidth,panelStyles.itemHeight))
 
-    let title = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.titleFont, lib.name, NSMakeRect(20, 20, 200, 18))
+    // Create a proper date & time
+    let showInfo
+    if (lib.lastModified != null) {
+      const today = new Date()
+      const year = lib.lastModified.getFullYear()
+      const month = lib.lastModified.getMonth()
+      const day = lib.lastModified.getDay()
+      const date = lib.lastModified.getDate()
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+      const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+      const monthName = months[month]
+      const dayName = days[day]
+      const hours = lib.lastModified.getHours()
+      const minutes = lib.lastModified.getMinutes()
+      if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate()) {
+        showInfo = `Today at ${hours}:${minutes} - ${lib.type}`
+      } else if (year === today.getFullYear() && month === today.getMonth() && date === today.getDate() - 1) {
+        showInfo = `Yesterday at ${hours}:${minutes} - ${lib.type}`
+      } else {
+        showInfo = `${dayName} ${monthName} ${date}, ${year} at ${hours}:${minutes} - ${lib.type}`
+      }
+    } else { // If library is missing, deleted, we still need to show something.
+      showInfo = "Undefined"
+    }
+
+    let title = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.titleFont, lib.name, NSMakeRect(20, 12, 220, 18))
+    let subtitle = createText(theme, panelStyles.darkTextGrey, panelStyles.lightTextGrey, panelStyles.subtitleFont, showInfo, NSMakeRect(20, 28, 220, 18)) // Fri Sep 10, 2021 - 11:30
 
     let button = NSButton.alloc().initWithFrame(NSMakeRect(237,10,80,36))
     button.setTitle('Swap')
@@ -114,7 +145,7 @@ const createSelectLibraryView = (panelStyles, theme, libraries) => {
       libraryWasSelected(lib, applyToSelection)
     })
 
-    const wut = [title, button].forEach(i => listItem.addSubview(i))
+    const wut = [title, subtitle, button].forEach(i => listItem.addSubview(i))
 
     libraryContent.addSubview(listItem)
   })
@@ -130,7 +161,7 @@ const createProgressView = (panelStyles, theme) => {
   let panelContent = createView(NSMakeRect(0, 0, panelStyles.panelWidth, panelStyles.panelHeight - panelStyles.panelHeader))
   let themesTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.sectionFont, `..`, NSMakeRect(20, 55, 200, 18))
 
-  let progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.progressFont, `..`, NSMakeRect(20, 428, 180, 18))
+  progressTitle = createText(theme, panelStyles.blackText, panelStyles.whiteText, panelStyles.progressFont, `..`, NSMakeRect(20, 428, 280, 18))
   let progressBar = createProgressBar(NSMakeRect(20, 400, panelStyles.panelWidth-40, 18))
 
   let completeButton = NSButton.alloc().initWithFrame(NSMakeRect(panelStyles.panelWidth-80-12,420,80,36))
@@ -152,15 +183,16 @@ const createProgressView = (panelStyles, theme) => {
 
   const updateTextStatus = (string) => {
     textView.string = textView.string() + string + "\n"
-    textView.scrollRangeToVisible( NSMakeRange( textView.string().length, 1 ) )
+    // Scroll to bottom
+    textView.scrollRangeToVisible( NSMakeRange( textView.string().length()-1 , 1 ) )
   }
 
   const updateProgress = (perc) => {
     progressTitle.setStringValue("Replacing: " + Math.round(perc*100) + "%")
     progressBar.indeterminate = false
     progressBar.setDoubleValue(perc*100.0)
+
     if (perc >= 1) {
-      progressTitle.setStringValue("Operation Complete")
       completeButton.enabled = true
     }
   }

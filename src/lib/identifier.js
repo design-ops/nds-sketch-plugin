@@ -7,7 +7,7 @@ export const getIdentifiersIn = (layer, lookup) => {
     layer.forEach( sublayer => {
         let context = getContextFromName(null, sublayer)
 
-        console.log(` ∟ [Scanning:  ${context}]`)
+        console.log(`[Preparing:  ${context}]`)
 
         // Get Artboard Section name only
         context._arr = context._arr.map((e) => e.split(" - ")[0])

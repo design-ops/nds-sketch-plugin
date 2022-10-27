@@ -1,29 +1,32 @@
 //lhs => specific
 //rhs => general
 const matchScore = (lhs, rhs) => {
-    const [lhsPath, lhsToken] = getPathAndToken(lhs)
-    const [rhsPath, rhsToken] = getPathAndToken(rhs)
+    const [lhsPath, lhsToken] = getPathTokenAndTheme(lhs)
+    const [rhsPath, rhsToken, rhsTheme] = getPathTokenAndTheme(rhs)
 
     if (lhsToken !== rhsToken) {
         return 0;
     }
 
+    let score = 0;
+    // Check if rhs.theme != null
+    if (rhsTheme != null) {
+        score += 1 // << ((lhsPath.length + 1) * 2) // Make @theme-name always win
+    }
+
     if (rhsPath.length === 0) {
-        return 1;
+        // If the rhs was just a token (and it's matched to get this far) then it's the weakest possible match.
+         // So here we return the current score + 1, which will either be 1 or 1 + the maximum possible value if there was a theme.
+        return 1 + score;
     }
 
     if (lhsPath.length === 0) {
         return 0;
     }
 
-    if (lhs === rhs) {
-        return Number.MAX_SAFE_INTEGER;
-    }
-
     const rhsIterator = rhsPath[Symbol.iterator]();
     let rhsComponent = rhsIterator.next().value
 
-    let score = 0;
      // The score value of the current component - this goes down each time i.e. starts at the maximum and works its way down
     let nextScore = 1 << (lhsPath.length * 2)
 
@@ -64,10 +67,14 @@ const matchScore = (lhs, rhs) => {
     return 0;
 }
 
-const getPathAndToken = (from) => {
+const getPathTokenAndTheme = (from) => {
     const elements = from.split("/")
     const token = elements.pop()
-    return [elements.reverse(), token]
+    let theme = null
+      if (elements.length !== 0) {
+      theme = elements[0].startsWith("@") ? elements.shift().substring(1) : null
+    }
+    return [elements.reverse(), token, theme]
 }
 
 const getVariant = (component) => {
@@ -85,4 +92,4 @@ const getComponentWithoutVariant = (component) => {
     return component
 }
 
-module.exports = {matchScore}
+module.exports = {matchScore, getPathTokenAndTheme}
