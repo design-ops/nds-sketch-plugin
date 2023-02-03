@@ -39,8 +39,6 @@ const getNestedContexts = (layer, context, lookup) => {
 
             if (sublayer.overrides.length > 0){ // If the Symbol has Overrides
 
-
-
                 // Check to see if this is a component or not.
                 // If it is not a compoennt, we need to match this as well.
                 // Then we need to get it's overrides
