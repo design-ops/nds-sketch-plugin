@@ -2,13 +2,13 @@
   "compatibleVersion": 70,
   "bundleVersion": 1,
   "homepage": "https://github.com/design-ops/nds-sketch-plugin",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "appcast": "https://raw.githubusercontent.com/design-ops/nds-sketch-plugin/master/appcast.xml",
   "commands": [
     {
       "name": "NDS Theme Replacer",
       "identifier": "com.natural-ds.plugin",
-      "shortcut": "ctrl command d",
+      "shortcut": "ctrl command f",
       "script": "./nds-theme-replace.js",
       "handlers": {
         "run": "onRun",
@@ -24,5 +24,7 @@
       "com.natural-ds.plugin"
     ]
   },
+  "name": "NDS Theme Replacer",
+  "description": "Swap out the current NDS theme for a new one",
   "icon": "icon.png"
 }

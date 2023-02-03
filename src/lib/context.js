@@ -1,11 +1,11 @@
 
 export class VariableSizeContext {
     constructor(str) {
-        this._arr = this._arrayFromString(str)
+        this._arr = this._arrayFromString(str) 
     }
     _arrayFromString(str) {
         return str.split("/").map( entry => {
-            if (entry.charAt(0) == "_") return entry.substr(1)
+            if (entry.charAt(0) == "_") return entry.substr(1).split(" - ")[0]
             return entry
         })
     }
