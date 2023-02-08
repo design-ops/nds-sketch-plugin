@@ -48,16 +48,10 @@ const getNestedContexts = (layer, context, lookup) => {
                   // If it's a component, we need to see if we
                   // can get a match from the components library
                   // Probably not going to happen, ever
-
                   let nested = getContextsFromOverrides(sublayer.overrides, newContext, lookup)
                   res = res.concat( nested )
 
                 } else { // If it isn't a Component
-
-                  // Context of the layer
-                  // Since we're on an Artboard, and not inside a symbol, the context must be the artboard name.
-                  // eg. `artboard-name/symbol-name/layer-name` > 'artboard-name'
-                  newContext._arr.splice(1)
 
                   // Get Token name
                   // Get the actual shared style name
@@ -73,7 +67,7 @@ const getNestedContexts = (layer, context, lookup) => {
                   }
 
                   // Create the new Token
-                  newContext._arr.push(thisToken)
+                  newContext = context.append(thisToken)
 
                   res.push({context: newContext, layer: sublayer})
 
@@ -85,11 +79,6 @@ const getNestedContexts = (layer, context, lookup) => {
 
             } else {  // If the Symbol does NOT have Overrides
 
-                // Context of the layer
-                // Since we're on an Artboard, and not inside a symbol, the context must be the artboard name.
-                // eg. `artboard-name/symbol-name/layer-name` > 'artboard-name'
-                newContext._arr.splice(1)
-
                 // Get Token name
                 // Get the actual shared style name
                 // eg. 'symbol-name/token-name' > 'token-name'
@@ -98,28 +87,20 @@ const getNestedContexts = (layer, context, lookup) => {
                   // If symbol is not found in any Library
                   // Go look for a reference in the current document
                   thisToken = getSymbolFromDocument(sublayer.symbolId)
-
                 } else {
                   thisToken = lookup[sublayer.symbolId].name.split('/').slice(-1)
                 }
 
                 // Create the new Token
-                newContext._arr.push(thisToken)
+                newContext = context.append(thisToken)
 
                 res.push({context: newContext, layer: sublayer})
             }
 
         } else if ((sublayer.type == 'Text' || sublayer.type == 'ShapePath') && sublayer.hidden == false && sublayer.locked == false) { // If it's a Layer or Text style, igonre hidden or locked layers
-          // console.log(sublayer)
 
             // only add layers that have shared styles
             if (sublayer.sharedStyle != null) {
-
-              // Context of the layer
-              // Remove the layer name because we only need the context.
-              // Since we know this is not nested, we only need the first bit.
-              // eg. `artboard-name/symbol-name/layer-name` > 'artboard-name'
-              newContext._arr.splice(1)
 
               // Get Token name
               // Get the actual shared style name
@@ -128,7 +109,7 @@ const getNestedContexts = (layer, context, lookup) => {
               thisToken = sublayer.sharedStyle.name.split('/').slice(-1)
 
               // Create the new Token
-              newContext._arr.push(thisToken)
+              newContext = context.append(thisToken)
 
               res.push({context: newContext, layer: sublayer})
             }
@@ -144,7 +125,6 @@ const getContextsFromOverrides = (overrides, context, lookup) => {
     let baseContext = context;
     let nestedContexts = []
     let res = []
-
 
     overrides.forEach( override => {
 

@@ -6,8 +6,8 @@
   <description>Swap out the current NDS theme for a new one.</description>
   <language>en</language>
   <item>
-    <title>Version 2.0.0</title>
-    <enclosure url="https://github.com/design-ops/nds-sketch-plugin/releases/download/v2.0.0/nds.sketchplugin-v2.0.0.zip" sparkle:version="2.0.0"/>
+    <title>Version 2.1.0</title>
+    <enclosure url="https://github.com/design-ops/nds-sketch-plugin/releases/download/v2.1.0/nds.sketchplugin-v2.1.0.zip" sparkle:version="2.1.0"/>
   </item>
 </channel>
 </rss>
