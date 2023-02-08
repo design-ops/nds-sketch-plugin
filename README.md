@@ -56,7 +56,7 @@ Similar to states, **Variants** can be used to describe a specific state of a **
 #### Example for Style Variants
 * `_button`
 * `_button[active]`
-* `_button[disabled]`
+* `_button[highlighted]`
 
 #### Example for Layout Variants
 * `carousel`
@@ -71,23 +71,18 @@ If we need to apply a radius to a layer, we would use a radius modifier:
 
 Create a new artboard named `tag/background --radius`, and in that artboard we would include a single layer with the required radius.
 
-## Direct Inheritance [TBA]
-If we need to specifically target a component's direct descendant, we can specifically declare the target by prepending a `>` in the Token name.
-
-eg `card/>background` will only be applied to the `background` directly nested in `card` and will not be inherited by anything else eg. `card/tag/background`. 
-
 ## Glossary
 
-*Token:* A token describes the smallest and undividable parts of your design. Tokens are **Text Styles**, **Layer Styles** or **Icons**.
+**Token:** A Token (or Composite Token) describes the smallest and undividable parts of your design. Tokens are **Text Styles**, **Layer Styles** or **Icons**. 
 
-*Component:* A component is made up of **Tokens** and nested **Components** and represents more complex structures in your designs.
+**Component:** A component is made up of **Design Tokens** and nested **Components** and represents more complex re-useable structures in your designs.
 
-*Variant:* Variants are used to describe a specific state or layout variant of a **Component**.
+**Variant:** Variants are used to describe a specific state or variant of a **Component**.
 
 ## Rules
 
 1. **Components** must have unique names. 
 2. **Components** must have an underscore (`_`) prepending their names.
 3. Variants can only be applied to **Components**.
-4. A default for each **Token** is required.
+4. A default of each **Design Token** is required.
 
