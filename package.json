@@ -2,7 +2,7 @@
   "name": "NDS-Theme-Replacer",
   "decription": "Replace Natural Design System theme libraries",
   "homepage": "https://github.com/design-ops/nds-sketch-plugin",
-  "version": "2.0.0",
+  "version": "2.2.0",
   "author": "design-ops",
   "engines": {
     "sketch": ">=3.0"
