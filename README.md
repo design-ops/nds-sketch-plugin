@@ -59,9 +59,9 @@ Similar to states, **Variants** can be used to describe a specific state of a **
 * `_button[highlighted]`
 
 #### Example for Layout Variants
-* `carousel`
-* `carousel[fullWidth]`
-* `carousel[paged]`
+* `_carousel`
+* `_carousel[fullWidth]`
+* `_carousel[paged]`
 
 #### Example for Targeted Components
 * `_block/availability/available`
