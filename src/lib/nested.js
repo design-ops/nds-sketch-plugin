@@ -37,13 +37,14 @@ export const updateNestedContextsFromOverride = (nestedContexts, override, looku
         // 2. If there is a value, we need to find it's name
         // 3. We do a 'Split' because we only need the token name
 
-        // console.log(lookup[override.value])
-
         if (lookup[override.value] != undefined) {
-          contextName = lookup[override.value].name.split('/').slice(-1)
+            
+            contextName = lookup[override.value].name
+            if (contextName.charAt(0) != "_") {
+                contextName = contextName.split('/').slice(-1)
+            }
+            
         } else {
-
-          // console.log('[Style Not found]')
 
           // If symbol is not found in any Library
           // Go look for a reference in the current document
