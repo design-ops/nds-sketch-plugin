@@ -31,7 +31,7 @@ export const getSymbolFromDocument = (id) => {
   let thisSymbol = getSymbols.find(el => el.symbolId == id)
   let thisToken
   if (thisSymbol.name.charAt(0) == "_") {
-    thisToken = thisSymbol.name.substring(1).split('/').slice(-1)
+    thisToken = thisSymbol.name //.substring(1).split('/').slice(-1)
   } else {
     thisToken = thisSymbol.name.split('/').slice(-1)
   }
