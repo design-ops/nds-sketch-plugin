@@ -7,7 +7,8 @@
   <language>en</language>
   <item>
     <title>Version 2.2.1</title>
-    <enclosure url="https://github.com/design-ops/nds-sketch-plugin/releases/download/2.2.1/nds.sketchplugin.zip" sparkle:version="2.2.1"/>
+    <enclosure url="https://github.com/design-ops/nds-sketch-plugin/releases/download/v2.2.1/nds.sketchplugin.zip" sparkle:version="2.2.1"/>
   </item>
 </channel>
 </rss>
+
